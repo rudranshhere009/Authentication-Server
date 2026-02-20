@@ -306,100 +306,160 @@ Suggested telemetry APIs for extended monitoring surface:
 - `GET /admin/endpoints` - endpoint inventory and health
 - `GET /admin/reports/activity` - consolidated user and endpoint reports
 
-## :page_facing_up: Monitoring Code Patterns
+## :satellite: Enterprise Monitoring and Reporting Blueprint
 
-Below are implementation-ready patterns you can add so the admin dashboard receives the exact telemetry you described.
+This section defines the expanded monitoring model for your product vision: real-time session tracking, Linux endpoint registration, packet-aware activity summaries, download/share visibility, and admin-grade reporting pipelines.
 
-### 1) Backend telemetry model example
+The objective is to let the dashboard answer, in one place, all operational questions:
 
-```python
-# models_telemetry.py
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON
-from sqlalchemy.sql import func
-from models import Base
+- Who logged in, when, and from which host?
+- Which sessions are active, expired, revoked, or forced-terminated?
+- What endpoint/network behavior was observed for each registered Linux system?
+- What content movement patterns (downloads/shares) were reported?
+- Which events require immediate admin action?
 
-class EndpointTelemetry(Base):
-    __tablename__ = "endpoint_telemetry"
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    hostname = Column(String, nullable=False)
-    event_type = Column(String, nullable=False)  # packet_summary, file_share, download
-    payload = Column(JSON, nullable=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+### Monitoring Domains
+
+The monitoring system should be organized into clear domains so reports remain accurate and scalable.
+
+- `Identity domain`: user profile, role, block state, endpoint ownership
+- `Session domain`: login/logout timeline, JWT session state, revoke actions
+- `Endpoint domain`: hostname, OS metadata, heartbeat, registration state
+- `Network domain`: packet and flow summaries, destination patterns, throughput
+- `Data movement domain`: download/share audit events and volume aggregates
+- `Security domain`: anomalies, suspicious behavior indicators, incident flags
+
+### Real-Time Data Pipeline
+
+Use periodic agent pushes plus dashboard polling for near real-time observability.
+
+```mermaid
+flowchart LR
+    Agent[Linux Agent] --> Ingest[Telemetry Ingestion API]
+    Ingest --> Store[(PostgreSQL Telemetry Tables)]
+    Store --> Report[Report Aggregation Layer]
+    Report --> Dash[Admin Dashboard]
+    Dash --> Action[Block/Revoke/Investigate]
 ```
 
-### 2) Backend ingestion endpoint example
+Pipeline behavior:
 
-```python
-# main.py (example extension)
-from pydantic import BaseModel
-from sqlalchemy import select
-from models import User
+- Agent publishes heartbeat + telemetry at fixed intervals
+- API validates registered host-user binding before accepting telemetry
+- Storage keeps raw event records and derived rollups
+- Dashboard consumes both live snapshots and historical reports
+- Admin actions (block/revoke) are written back to operational state
 
-class TelemetryIn(BaseModel):
-    username: str
-    hostname: str
-    event_type: str
-    payload: dict
+### Reporting Catalog for Admin Dashboard
 
-@app.post("/agent/telemetry")
-async def ingest_telemetry(body: TelemetryIn):
-    async with async_session() as session:
-        result = await session.execute(select(User).where(User.username == body.username))
-        user = result.scalar_one_or_none()
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-        session.add(EndpointTelemetry(
-            user_id=user.id,
-            hostname=body.hostname,
-            event_type=body.event_type,
-            payload=body.payload
-        ))
-        await session.commit()
-    return {"message": "telemetry accepted"}
-```
+The dashboard should expose both live cards and deep reports.
 
-### 3) Linux agent packet summary pattern
+Live operational cards:
 
-```python
-# agent_network_summary.py (example extension)
-import socket
-import psutil
-import requests
+- Active users right now
+- Active sessions right now
+- Blocked users
+- Endpoints online/offline
+- High-risk anomalies in last 15/60 minutes
 
-API = "http://localhost:8000/agent/telemetry"
-USERNAME = "registered_user"
+Detailed reports:
 
-def summarize_network():
-    net = psutil.net_io_counters()
-    return {
-        "bytes_sent": net.bytes_sent,
-        "bytes_recv": net.bytes_recv,
-        "packets_sent": net.packets_sent,
-        "packets_recv": net.packets_recv,
-    }
+- Per-user login/logout history with endpoint correlation
+- Session lifecycle report (issued, expired, revoked, forced logout)
+- Endpoint activity report per Linux host
+- Network usage report (bytes, packets, protocol mix, top destinations)
+- Download/share audit report by user/endpoint/time window
+- Incident timeline report (anomaly -> admin action -> outcome)
 
-def push():
-    requests.post(API, json={
-        "username": USERNAME,
-        "hostname": socket.gethostname(),
-        "event_type": "packet_summary",
-        "payload": summarize_network(),
-    }, timeout=10)
-```
+### Linux Endpoint Registration Model
 
-### 4) Admin report query pattern
+Each Linux system should be explicitly registered to a user or asset identity. Registration prevents untrusted hosts from sending telemetry and lets admins filter reports by user, machine, or department.
 
-```python
-# report example (extension)
-@app.get("/admin/reports/activity")
-async def activity_report(limit: int = 200):
-    async with async_session() as session:
-        rows = await session.execute(
-            select(EndpointTelemetry).order_by(EndpointTelemetry.created_at.desc()).limit(limit)
-        )
-        return [r.__dict__ for r in rows.scalars().all()]
-```
+Recommended endpoint identity fields:
+
+- endpoint_id (server-issued)
+- hostname
+- os_version
+- agent_version
+- user_owner
+- registration_time
+- last_heartbeat
+- status (online, stale, blocked)
+
+### Packet and Data-Movement Visibility Scope
+
+To keep monitoring useful and safe, capture structured summaries rather than raw full packet payload by default.
+
+Recommended packet/network summaries:
+
+- total bytes sent/received
+- total packets sent/received
+- top remote IP/domain endpoints
+- top protocols/ports
+- burst windows and sustained unusual volume
+
+Recommended download/share event summaries:
+
+- event type (download, upload, share)
+- file metadata (name hash, extension, size, path category)
+- source/destination classification
+- endpoint and user identity
+- timestamp and correlation id
+
+### Retention, Governance, and Audit
+
+Because this data is operationally sensitive, retention and traceability policies must be explicit.
+
+Baseline policy model:
+
+- hot telemetry: 7-30 days for fast dashboard queries
+- warm rollups: 90-180 days for trend analysis
+- incident/audit records: long-term archival based on compliance need
+
+Governance controls:
+
+- role-based access for report views
+- immutable audit log for admin actions
+- masking/redaction for sensitive fields in exported reports
+- signed export metadata for chain-of-custody
+
+### Performance and Scale Targets
+
+Define measurable targets so the platform remains responsive as endpoints grow.
+
+- dashboard live refresh p95 under 2 seconds
+- telemetry ingest acknowledgment under 500 ms p95
+- report generation under 5 seconds for standard time windows
+- endpoint heartbeat loss alert within 2 missed intervals
+
+Scaling levers:
+
+- partition telemetry tables by time
+- background workers for report materialization
+- cache hot dashboards and common filters
+- async batch ingestion for high endpoint count deployments
+
+### Rollout Plan
+
+A phased rollout reduces risk while adding the monitoring depth you want.
+
+Phase 1:
+
+- endpoint registration + heartbeat
+- session timeline and login/logout accuracy
+- basic live dashboard cards
+
+Phase 2:
+
+- packet summary ingestion
+- download/share summary ingestion
+- user and endpoint deep reports
+
+Phase 3:
+
+- anomaly scoring and policy rules
+- automated incident workflows
+- scheduled executive/security report exports
 
 ## :key: Auth and Session Lifecycle
 
