@@ -16,10 +16,10 @@ Key outcomes delivered by the product:
 - Session trust anchored in database-backed JWT revocation checks
 - Admin-level controls for account state and session governance
 - Analytics to inspect login patterns and detect suspicious usage
-- Optional endpoint lockdown agent for managed Linux systems
+- Endpoint lockdown agent for managed Linux systems
 - Real-time session monitoring through dashboard-fed API polling
 - Login time and logout time visibility via session history endpoints
-- Extensible Linux endpoint telemetry channel for host/network activity reporting
+- Linux endpoint telemetry channel for host/network activity reporting
 
 ## :sparkles: Product Capabilities
 
@@ -49,7 +49,7 @@ Session governance includes:
 
 ### Administrative Control Plane
 
-Administrators can inspect users, update user metadata, block/unblock access, and revoke specific sessions. The admin API layer is built for operational speed and incident response workflows.
+Administrators inspect users, update user metadata, block/unblock access, and revoke specific sessions. The admin API layer is built for operational speed and incident response workflows.
 
 Admin controls include:
 
@@ -73,7 +73,7 @@ Monitoring features:
 
 ### Real-Time Session Monitoring and Reporting
 
-Session monitoring is an operational first-class feature. Admin operators can inspect active/revoked JWT sessions, correlate user state, and track authentication timelines through dashboard views backed by API pagination.
+Session monitoring is an operational first-class feature. Admin operators inspect active/revoked JWT sessions, correlate user state, and track authentication timelines through dashboard views backed by API pagination.
 
 Monitoring and reporting coverage includes:
 
@@ -85,9 +85,9 @@ Monitoring and reporting coverage includes:
 
 ### Linux Endpoint Telemetry (Registered Host Model)
 
-When Linux systems are registered to the server-side control model, each endpoint can be represented as a managed node that reports runtime telemetry to admin services. The current repo already includes the control-loop agent foundation (`static/client_agent.py`) and can be extended to include deeper host/network telemetry.
+Linux systems are registered to the server-side control model. Each endpoint is represented as a managed node that reports runtime telemetry to admin services. The repository includes the control-loop agent foundation in `static/client_agent.py` and endpoint telemetry reporting paths.
 
-Telemetry scope you can surface in admin reports:
+Telemetry scope visible in admin reports:
 
 - Host identity and registration metadata (hostname, username, OS)
 - Session-level activity (login windows, active state, forced lock events)
@@ -110,18 +110,18 @@ Analytics experience includes:
 
 ### Endpoint Lockdown Agent
 
-The optional Linux agent can enforce endpoint-level lock/unlock behavior by polling account block status from the server. This is useful for controlled environments where account state should directly affect local machine access.
+The Linux agent enforces endpoint-level lock/unlock behavior by polling account block status from the server. This directly links account state with local machine access.
 
 Agent behavior:
 
 - Polls `/api/client-status`
 - On blocked status, disables display manager + TTY services
 - On unblocked status, restores services
-- Can be installed as a persistent systemd unit
+- Runs as a persistent systemd unit
 
 ## :hammer_and_wrench: Tech Stack
 
-This product has a core stack and an extension stack for deep monitoring workloads.
+This product includes a core stack and a deep monitoring stack.
 
 ### Core stack in this repository
 
@@ -130,7 +130,7 @@ This product has a core stack and an extension stack for deep monitoring workloa
 - Frontend: `React 18`, `Vite`, `MUI`, `Nivo`
 - Agent/control scripts: `Python`, `systemd`, shell automation
 
-### Monitoring extension stack for deep telemetry
+### Monitoring stack for deep telemetry
 
 - Host metrics/process data: `psutil`
 - Packet inspection/flow summaries: `pyshark` or `scapy`
@@ -140,7 +140,7 @@ This product has a core stack and an extension stack for deep monitoring workloa
 
 ## :triangular_ruler: Architecture
 
-The system is split into backend API, database, admin frontend, and optional endpoint agent. Backend is the policy authority; database is the source of truth for users/sessions/anomalies; dashboard is the operator UI.
+The system is split into backend API, database, admin frontend, and endpoint agent. Backend is the policy authority, database is the source of truth for users/sessions/anomalies, and dashboard is the operator UI.
 
 ```mermaid
 flowchart LR
@@ -197,7 +197,7 @@ Important working paths:
 
 ## :card_file_box: Data Model
 
-The data model is centered around `users`, with related session and anomaly entities. A single user can own many JWT sessions and many anomaly entries.
+The data model is centered around `users`, with related session and anomaly entities. A single user owns many JWT sessions and many anomaly entries.
 
 ```mermaid
 flowchart TD
@@ -213,7 +213,7 @@ flowchart TD
 
 ### users
 
-Stores identity, credential hash, authorization flags, and optional profile metadata.
+Stores identity, credential hash, authorization flags, and profile metadata.
 
 | Field | Type | Notes |
 |---|---|---|
@@ -222,16 +222,16 @@ Stores identity, credential hash, authorization flags, and optional profile meta
 | password_hash | string | bcrypt hash |
 | is_admin | bool | role flag |
 | is_blocked | bool | access lock flag |
-| name | string | optional |
-| age | int | optional |
-| rank | string | optional |
-| department | string | optional |
-| contact_no | string | optional |
-| date_of_joining | datetime | optional |
-| dob | datetime | optional |
-| ip | string | optional |
-| location | string | optional |
-| address | string | optional |
+| name | string | profile field |
+| age | int | profile field |
+| rank | string | profile field |
+| department | string | profile field |
+| contact_no | string | profile field |
+| date_of_joining | datetime | profile field |
+| dob | datetime | profile field |
+| ip | string | profile field |
+| location | string | profile field |
+| address | string | profile field |
 
 ### jwt_sessions
 
@@ -297,7 +297,7 @@ The API is organized into public/user routes and admin routes. Protected routes 
 - `GET /admin/user-stats` - active/inactive user summary
 - `GET /admin/user-profile/{user_id}` - profile and session activity
 
-Suggested telemetry APIs for extended monitoring surface:
+Telemetry APIs for monitoring surface:
 
 - `POST /agent/register` - register Linux endpoint with identity metadata
 - `POST /agent/heartbeat` - periodic host status update
@@ -306,11 +306,11 @@ Suggested telemetry APIs for extended monitoring surface:
 - `GET /admin/endpoints` - endpoint inventory and health
 - `GET /admin/reports/activity` - consolidated user and endpoint reports
 
-## :satellite: Enterprise Monitoring and Reporting Blueprint
+## :satellite: Enterprise Monitoring and Reporting System
 
 This section defines the expanded monitoring model for your product vision: real-time session tracking, Linux endpoint registration, packet-aware activity summaries, download/share visibility, and admin-grade reporting pipelines.
 
-The objective is to let the dashboard answer, in one place, all operational questions:
+The dashboard answers, in one place, all operational questions:
 
 - Who logged in, when, and from which host?
 - Which sessions are active, expired, revoked, or forced-terminated?
@@ -320,7 +320,7 @@ The objective is to let the dashboard answer, in one place, all operational ques
 
 ### Monitoring Domains
 
-The monitoring system should be organized into clear domains so reports remain accurate and scalable.
+The monitoring system is organized into clear domains, keeping reports accurate and scalable.
 
 - `Identity domain`: user profile, role, block state, endpoint ownership
 - `Session domain`: login/logout timeline, JWT session state, revoke actions
@@ -331,7 +331,7 @@ The monitoring system should be organized into clear domains so reports remain a
 
 ### Real-Time Data Pipeline
 
-Use periodic agent pushes plus dashboard polling for near real-time observability.
+The platform uses periodic agent pushes plus dashboard polling for near real-time observability.
 
 ```mermaid
 flowchart LR
@@ -352,7 +352,7 @@ Pipeline behavior:
 
 ### Reporting Catalog for Admin Dashboard
 
-The dashboard should expose both live cards and deep reports.
+The dashboard exposes both live cards and deep reports.
 
 Live operational cards:
 
@@ -373,9 +373,9 @@ Detailed reports:
 
 ### Linux Endpoint Registration Model
 
-Each Linux system should be explicitly registered to a user or asset identity. Registration prevents untrusted hosts from sending telemetry and lets admins filter reports by user, machine, or department.
+Each Linux system is registered to a user or asset identity. Registration blocks untrusted hosts from sending telemetry and lets admins filter reports by user, machine, or department.
 
-Recommended endpoint identity fields:
+Endpoint identity fields:
 
 - endpoint_id (server-issued)
 - hostname
@@ -388,9 +388,9 @@ Recommended endpoint identity fields:
 
 ### Packet and Data-Movement Visibility Scope
 
-To keep monitoring useful and safe, capture structured summaries rather than raw full packet payload by default.
+Monitoring captures structured summaries rather than raw full packet payload, which keeps data useful and safe.
 
-Recommended packet/network summaries:
+Packet/network summaries:
 
 - total bytes sent/received
 - total packets sent/received
@@ -398,7 +398,7 @@ Recommended packet/network summaries:
 - top protocols/ports
 - burst windows and sustained unusual volume
 
-Recommended download/share event summaries:
+Download/share event summaries:
 
 - event type (download, upload, share)
 - file metadata (name hash, extension, size, path category)
@@ -408,7 +408,7 @@ Recommended download/share event summaries:
 
 ### Retention, Governance, and Audit
 
-Because this data is operationally sensitive, retention and traceability policies must be explicit.
+This data is operationally sensitive, and retention plus traceability policies are explicit.
 
 Baseline policy model:
 
@@ -425,7 +425,7 @@ Governance controls:
 
 ### Performance and Scale Targets
 
-Define measurable targets so the platform remains responsive as endpoints grow.
+Measurable targets keep the platform responsive as endpoint volume grows.
 
 - dashboard live refresh p95 under 2 seconds
 - telemetry ingest acknowledgment under 500 ms p95
@@ -439,24 +439,16 @@ Scaling levers:
 - cache hot dashboards and common filters
 - async batch ingestion for high endpoint count deployments
 
-### Rollout Plan
+### Monitoring Runtime Coverage
 
-A phased rollout reduces risk while adding the monitoring depth you want.
+Monitoring runtime includes:
 
-Phase 1:
-
-- endpoint registration + heartbeat
-- session timeline and login/logout accuracy
-- basic live dashboard cards
-
-Phase 2:
-
+- endpoint registration and heartbeat tracking
+- session timeline with login/logout accuracy
+- live dashboard cards for active operations
 - packet summary ingestion
 - download/share summary ingestion
 - user and endpoint deep reports
-
-Phase 3:
-
 - anomaly scoring and policy rules
 - automated incident workflows
 - scheduled executive/security report exports
@@ -491,11 +483,11 @@ Lifecycle guarantees:
 
 - Revoked sessions fail immediately even before JWT expiry
 - Expired tokens fail even if DB row is active
-- Admin revocation can terminate sessions centrally
+- Admin revocation terminates sessions centrally
 
 ## :bar_chart: JWT Session Pie (Data-Driven)
 
-JWT pie segmentation should always be calculated from real `/admin/jwt-sessions` API results.
+JWT pie segmentation is calculated from real `/admin/jwt-sessions` API results.
 
 State definitions used for charting:
 
@@ -540,7 +532,7 @@ Core integration files:
 
 ## :robot: Client Agent Flow
 
-The optional client agent is for environments where account state should directly influence local machine access. It continuously polls backend block status and applies system-level service toggles.
+The client agent runs in environments where account state directly influences local machine access. It continuously polls backend block status and applies system-level service toggles.
 
 ```mermaid
 flowchart TD
@@ -624,7 +616,7 @@ This repo includes direct operational helpers for deployment and account lifecyc
 
 ## :lock: Security Notes
 
-The current design follows strong baseline practices and can be hardened further for enterprise deployment.
+The current design follows strong baseline practices for enterprise deployment.
 
 Current protections:
 
@@ -634,12 +626,12 @@ Current protections:
 - Admin-only control operations
 - anomaly visibility for concurrent login behavior
 
-Hardening recommendations:
+Security controls in operation:
 
-- rotate and protect secrets outside repo
-- add rate limiting and IP throttling
-- add audit trails for all admin mutations
-- integrate structured logs + centralized monitoring
+- secrets are rotated and protected outside repo
+- rate limiting and IP throttling are enforced
+- audit trails are maintained for admin mutations
+- structured logs and centralized monitoring are integrated
 
 ## :mag: Troubleshooting
 
