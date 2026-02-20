@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+sqlalchemy
+asyncpg
+psycopg2-binary
+cryptography
+python-dotenv
+python-jose==3.5.0
+bcrypt==3.2.0
+
