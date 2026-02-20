@@ -1,79 +1,100 @@
 ﻿# Authentication Server Platform :shield:
 
-A production-oriented authentication and session-governance platform built with **FastAPI + PostgreSQL + React (Vite)**.
+A full-stack authentication and session-governance platform built with **FastAPI + PostgreSQL + React (Vite)**. The system is designed for organizations that need strong control over user access, short-lived session security, and admin-grade operational visibility from a single product.
 
-It is designed as a central control plane for secure user access, short-lived JWT session control, admin monitoring, anomaly detection, and optional endpoint lockdown automation.
+It combines identity workflows, JWT lifecycle control, anomaly-aware monitoring, and an administrative analytics dashboard into one integrated solution.
 
 ## :dart: Executive Summary
 
-This product provides two major surfaces:
+This project functions as a centralized **Identity, Access, and Session Control** product. The backend enforces credential-based access and session validity, while the frontend gives administrators operational control over users and login behavior.
 
-1. **Core Auth API**
-2. **Admin Security Dashboard**
+At a practical level, the platform is suitable for internal enterprise tools, controlled operations environments, and security-sensitive deployments where session revocation, user blocking, and login intelligence are required.
 
-Together they deliver:
+Key outcomes delivered by the product:
 
-- Secure user registration and login
-- JWT issuance with server-side revocation control
-- Real-time session visibility for admins
-- User access governance (block/unblock)
-- Concurrent login anomaly logging
-- Operational scripts for bootstrap and lifecycle management
-- Optional Linux client agent for enforced endpoint blocking
+- A controlled user onboarding and login pipeline
+- Session trust anchored in database-backed JWT revocation checks
+- Admin-level controls for account state and session governance
+- Analytics to inspect login patterns and detect suspicious usage
+- Optional endpoint lockdown agent for managed Linux systems
 
-## :sparkles: Full Feature Set
+## :sparkles: Product Capabilities
 
-### Authentication and Identity
+### Identity and Authentication
 
-- User registration with profile metadata
-- Password hashing with bcrypt
-- Credential login with JWT token return
-- Username availability check API
+The authentication layer provides secure account registration and credential verification using bcrypt password hashing. Credentials are never stored in plaintext, and login always returns a signed JWT token with a strict expiration window.
 
-### JWT Session Management
+Core capabilities:
 
-- Unique session IDs (`jti`) persisted in database
-- Session validity requires:
-  - token signature valid
-  - token not expired
-  - session record active in DB
-- User logout revokes current session
-- Admin can revoke any session
-- User can view own JWT session history
+- User registration with profile metadata fields
+- Username availability checks
+- Password hashing and verification via bcrypt
+- JWT generation on successful login
+- User logout with server-side session revocation
 
-### Admin Control Plane
+### JWT Session Governance
 
-- Admin login/logout
-- List all users
-- Update selected user fields
-- Block/unblock user accounts
-- Paginated JWT session explorer
-- User-level analytics/profile endpoint
-- Aggregate active/inactive user stats endpoint
+Unlike stateless-only JWT implementations, this platform keeps session records in the database and validates active state per request. This enables immediate revocation without waiting for token expiry.
 
-### Security Monitoring
+Session governance includes:
 
-- Concurrent login anomaly detection
-- Anomaly log feed endpoint for dashboard polling
+- Persistent `jti` per login session
+- Active/inactive session state tracking
+- Revocation via user logout and admin action
+- Session history retrieval for users and admins
+- 15-minute token expiry model enforced at token level
 
-### Dashboard Analytics (React)
+### Administrative Control Plane
 
-- KPI cards (users, sessions, blocked, admins)
-- Weekly login trend chart
-- Monthly login trend chart
-- Session health chart
-- User distribution chart
+Administrators can inspect users, update user metadata, block/unblock access, and revoke specific sessions. The admin API layer is built for operational speed and incident response workflows.
+
+Admin controls include:
+
+- Admin authentication endpoints
+- Full user listing with role and block-state visibility
+- User attribute updates (rank, department, name, age)
+- Account block/unblock actions
+- Paginated JWT session inventory
+- Session-specific revocation endpoint
+- User profile analytics and aggregate user stats endpoints
+
+### Security Monitoring and Anomaly Tracking
+
+The platform records anomaly events when concurrent login behavior is detected within the active session window. This enables the dashboard to surface suspicious access patterns for manual investigation.
+
+Monitoring features:
+
+- Concurrent-login anomaly logging
+- Timestamped anomaly feed endpoint
+- Dashboard polling integration for alert visibility
+
+### Admin Dashboard Analytics
+
+The React dashboard provides operational metrics and visual telemetry over login/session behavior. It is intended for security and admin operators, not only developers.
+
+Analytics experience includes:
+
+- KPI cards (users, blocked users, admins, active sessions)
+- Weekly and monthly login trend visualizations
+- Session-health and user-distribution views
 - Hourly activity heatmap
-- User profile analytics view
+- Profile-level behavior view per user
+- Paginated JWT session management table
 
-### Endpoint Lockdown Automation
+### Endpoint Lockdown Agent
 
-- Client agent polls `/api/client-status`
-- If blocked, disables display manager/TTY services (Linux)
-- If unblocked, re-enables services
-- Deployable as systemd service (`static/setup_client.sh`)
+The optional Linux agent can enforce endpoint-level lock/unlock behavior by polling account block status from the server. This is useful for controlled environments where account state should directly affect local machine access.
+
+Agent behavior:
+
+- Polls `/api/client-status`
+- On blocked status, disables display manager + TTY services
+- On unblocked status, restores services
+- Can be installed as a persistent systemd unit
 
 ## :triangular_ruler: Architecture
+
+The system is split into backend API, database, admin frontend, and optional endpoint agent. Backend is the policy authority; database is the source of truth for users/sessions/anomalies; dashboard is the operator UI.
 
 ```mermaid
 flowchart LR
@@ -86,7 +107,16 @@ flowchart LR
     API -->|is_blocked true/false| Agent
 ```
 
+Component responsibilities:
+
+- Backend (`main.py`): auth, session checks, admin operations, stats
+- Data layer (`models.py`, `database.py`): schema + async persistence
+- Frontend (`admin-dashboard/`): admin workflow UX
+- Agent (`static/client_agent.py`): endpoint enforcement loop
+
 ## :open_file_folder: Repository Layout
+
+The repository keeps backend, frontend, and operational scripts in one workspace, making deployment and maintenance straightforward.
 
 ```text
 authserver-main/
@@ -104,7 +134,7 @@ authserver-main/
 |-- tty_client.py
 |-- static/
 |   |-- client_agent.py
-|   |-- setup_client.sh
+|   `-- setup_client.sh
 `-- admin-dashboard/
     |-- package.json
     |-- vite.config.js
@@ -112,9 +142,16 @@ authserver-main/
     `-- public/
 ```
 
-## :card_file_box: Data Model (Reliable Rendering)
+Important working paths:
 
-### Entity Relationship Flow
+- API entrypoint: `main.py`
+- Models: `models.py`
+- Dashboard app root: `admin-dashboard/src`
+- Client agent setup: `static/setup_client.sh`
+
+## :card_file_box: Data Model
+
+The data model is centered around `users`, with related session and anomaly entities. A single user can own many JWT sessions and many anomaly entries.
 
 ```mermaid
 flowchart TD
@@ -128,15 +165,17 @@ flowchart TD
     U -->|1-to-many| AL
 ```
 
-### `users`
+### users
+
+Stores identity, credential hash, authorization flags, and optional profile metadata.
 
 | Field | Type | Notes |
 |---|---|---|
 | id | int | PK |
 | username | string | Unique |
 | password_hash | string | bcrypt hash |
-| is_admin | bool | admin role flag |
-| is_blocked | bool | lockout flag |
+| is_admin | bool | role flag |
+| is_blocked | bool | access lock flag |
 | name | string | optional |
 | age | int | optional |
 | rank | string | optional |
@@ -148,63 +187,73 @@ flowchart TD
 | location | string | optional |
 | address | string | optional |
 
-### `jwt_sessions`
+### jwt_sessions
+
+Stores session lifecycle state for each token issuance event.
 
 | Field | Type | Notes |
 |---|---|---|
 | id | int | PK |
 | user_id | int | FK -> users.id |
-| jti | string | unique token id |
-| created_at | datetime | session creation time |
-| is_active | bool | server-side revocation flag |
+| jti | string | unique session id |
+| created_at | datetime | issuance time |
+| is_active | bool | revocation state |
 
-### `grid_sessions`
+### grid_sessions
+
+Keeps grid challenge state for the grid auth module (currently retained in model layer).
 
 | Field | Type | Notes |
 |---|---|---|
 | id | int | PK |
 | user_id | int | FK -> users.id |
-| grid_data | string | JSON string grid payload |
+| grid_data | string | serialized grid |
 | grid_signature | string | HMAC signature |
-| created_at | datetime | created timestamp |
-| is_active | bool | lifecycle flag |
+| created_at | datetime | timestamp |
+| is_active | bool | state flag |
 
-### `anomaly_logs`
+### anomaly_logs
+
+Captures security-relevant events for admin review and alerting.
 
 | Field | Type | Notes |
 |---|---|---|
 | id | int | PK |
 | user_id | int | FK -> users.id |
-| description | string | anomaly message |
-| created_at | datetime | timestamp |
+| description | string | event explanation |
+| created_at | datetime | log timestamp |
 
 ## :link: API Reference
 
+The API is organized into public/user routes and admin routes. Protected routes rely on bearer token auth and DB-backed session validity checks.
+
 ### Public and User Routes
 
-- `GET /`
-- `GET /api/client-status?username=<name>`
-- `GET /api/check-username?username=<name>`
-- `POST /register`
-- `POST /login`
-- `POST /logout`
-- `POST /logout-debug`
-- `GET /user/jwt-sessions` (Bearer token required)
+- `GET /` - service health message
+- `GET /api/client-status?username=<name>` - account block status for agent
+- `GET /api/check-username?username=<name>` - username existence probe
+- `POST /register` - new user registration
+- `POST /login` - user login and JWT issuance
+- `POST /logout` - revoke current JWT session
+- `POST /logout-debug` - debug token decode helper
+- `GET /user/jwt-sessions` - authenticated user session list
 
 ### Admin Routes
 
-- `POST /admin/login`
-- `POST /admin/logout`
-- `GET /admin/anomalies`
-- `GET /admin/users`
-- `GET /admin/jwt-sessions?skip=<n>&limit=<n>`
-- `POST /admin/update-user`
-- `POST /admin/block-user`
-- `POST /admin/jwt-sessions/{session_id}/revoke`
-- `GET /admin/user-stats`
-- `GET /admin/user-profile/{user_id}`
+- `POST /admin/login` - admin authentication
+- `POST /admin/logout` - admin session revoke
+- `GET /admin/anomalies` - anomaly feed
+- `GET /admin/users` - full user list
+- `GET /admin/jwt-sessions?skip=<n>&limit=<n>` - paginated sessions
+- `POST /admin/update-user` - update selected user fields
+- `POST /admin/block-user` - block/unblock user
+- `POST /admin/jwt-sessions/{session_id}/revoke` - revoke by session id
+- `GET /admin/user-stats` - active/inactive user summary
+- `GET /admin/user-profile/{user_id}` - profile and session activity
 
 ## :key: Auth and Session Lifecycle
+
+Session trust is established through two checks: JWT cryptographic validity and active session state in the database.
 
 ```mermaid
 sequenceDiagram
@@ -228,17 +277,23 @@ sequenceDiagram
     A-->>C: logged out
 ```
 
-## :bar_chart: JWT Session Pie (Real Logic, Not Conceptual)
+Lifecycle guarantees:
 
-The pie chart must always be computed from **real API data** from `/admin/jwt-sessions`.
+- Revoked sessions fail immediately even before JWT expiry
+- Expired tokens fail even if DB row is active
+- Admin revocation can terminate sessions centrally
 
-Classification rules used by backend logic:
+## :bar_chart: JWT Session Pie (Data-Driven)
 
-- `Active`: `is_active == true` and `created_at` within last 15 minutes
-- `Expired`: `is_active == true` and `created_at` older than 15 minutes
+JWT pie segmentation should always be calculated from real `/admin/jwt-sessions` API results.
+
+State definitions used for charting:
+
+- `Active`: `is_active == true` and `created_at` is within last 15 minutes
+- `Expired`: `is_active == true` and `created_at` is older than 15 minutes
 - `Revoked`: `is_active == false`
 
-### Real-time calculation example (frontend)
+Reference calculation:
 
 ```js
 const now = Date.now();
@@ -256,24 +311,26 @@ const counts = sessions.reduce(
 );
 ```
 
-This ensures the pie is data-driven and environment-specific, not static.
-
 ## :desktop_computer: Admin Dashboard Coverage
 
-Primary pages in `admin-dashboard/src/Pages`:
+The admin app is the operations console for this product and is implemented in `admin-dashboard/src`. It combines user governance, session control, and visual analytics in one workflow.
 
-- `DashboardPage.jsx`
-- `UsersPage.jsx`
-- `UserProfilePage.jsx`
-- `AllJwtSessionsPage.jsx`
-- `AnalyticsPage.jsx`
+Primary page modules:
 
-Core frontend service/hooks:
+- `DashboardPage.jsx` - KPIs + recent session insights
+- `UsersPage.jsx` - user table with filters and block actions
+- `UserProfilePage.jsx` - user-specific charts and activity table
+- `AllJwtSessionsPage.jsx` - paginated JWT session management
+- `AnalyticsPage.jsx` - trend and heatmap analytics
 
-- `admin-dashboard/src/api/AdminServices.js`
-- `admin-dashboard/src/hooks/useAdmin.jsx`
+Core integration files:
+
+- `api/AdminServices.js` - API service layer
+- `hooks/useAdmin.jsx` - state, data fetching, and actions
 
 ## :robot: Client Agent Flow
+
+The optional client agent is for environments where account state should directly influence local machine access. It continuously polls backend block status and applies system-level service toggles.
 
 ```mermaid
 flowchart TD
@@ -285,17 +342,25 @@ flowchart TD
     W --> P
 ```
 
+Operational notes:
+
+- Requires Linux/systemd context
+- Uses privileged systemctl operations
+- Must be deployed carefully in controlled environments
+
 ## :gear: Environment Variables
 
-Required variables:
+The backend and frontend rely on a small, clear env set.
+
+Required backend values:
 
 - `DATABASE_URL`
 - `SECRET_KEY`
 
-Optional but useful:
+Frontend/API endpoint values:
 
 - `VITE_API_URL`
-- `REACT_APP_API_URL`
+- `REACT_APP_API_URL` (compatibility fallback)
 
 Example:
 
@@ -307,7 +372,7 @@ VITE_API_URL=http://localhost:8000
 
 ## :wrench: Local Setup
 
-### Backend
+### Backend Setup
 
 ```bash
 python -m venv venv
@@ -322,7 +387,7 @@ python init_db.py
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-### Frontend
+### Frontend Setup
 
 ```bash
 cd admin-dashboard
@@ -330,48 +395,69 @@ npm install
 npm run dev
 ```
 
-Vite config currently serves dashboard on port `3000`.
+Development notes:
+
+- Vite server is configured for port `3000`
+- CORS origins in backend currently include localhost dashboard ports
+- Ensure `.env` is present before starting API
 
 ## :toolbox: Operations Scripts
 
-- `setup.sh` - Linux dependency/bootstrap automation
-- `init_db.py` - create schema
-- `reset_db.py` - drop and recreate schema
-- `make_admin.py` - create/promote admin account
-- `reset_admin.py` - reset admin password directly in PostgreSQL
-- `static/setup_client.sh` - deploy and enable client agent service
+This repo includes direct operational helpers for deployment and account lifecycle tasks.
+
+- `setup.sh`: installs Python/Node/PostgreSQL and project dependencies
+- `init_db.py`: creates all tables from SQLAlchemy metadata
+- `reset_db.py`: drops and recreates the schema
+- `make_admin.py`: creates or promotes an admin account
+- `reset_admin.py`: direct admin password reset via PostgreSQL
+- `static/setup_client.sh`: installs and enables client agent service
 
 ## :lock: Security Notes
 
-- Passwords are stored as bcrypt hashes
-- Session revocation is enforced in DB
-- JWT expiry is set to 15 minutes
-- Admin controls allow rapid incident response (revoke, block)
-- Do not commit sensitive `.env` secrets
+The current design follows strong baseline practices and can be hardened further for enterprise deployment.
 
-## :chart_with_upwards_trend: Scalability Guidance
+Current protections:
 
-To scale this as a larger product:
+- bcrypt password hashing
+- JWT expiry enforcement
+- DB-backed token revocation checks
+- Admin-only control operations
+- anomaly visibility for concurrent login behavior
 
-1. Add API worker scaling (`gunicorn` + uvicorn workers)
-2. Use reverse proxy with TLS (Nginx/Traefik)
-3. Add Redis for caching/session telemetry fanout
-4. Add rate limiting and audit logging
-5. Add CI/CD and automated tests
-6. Add containerized deployment (API + DB + dashboard)
+Hardening recommendations:
 
-## :memo: Project Status and Next Expansion
+- rotate and protect secrets outside repo
+- add rate limiting and IP throttling
+- add audit trails for all admin mutations
+- integrate structured logs + centralized monitoring
 
-Current project is already strong as a centralized auth/session control platform.
+## :mag: Troubleshooting
 
-High-impact next additions:
+### Push rejected (`fetch first`)
 
-- refresh token rotation
-- role-based access controls beyond admin flag
-- complete Grid MFA route activation
-- full anomaly notification channel (push/WebSocket)
-- production-grade observability (metrics + traces)
+```bash
+git fetch origin main
+git merge origin/main --allow-unrelated-histories
+git push -u origin main
+```
+
+### 401 errors on protected routes
+
+- Verify `Authorization: Bearer <token>` header
+- Confirm token age is within 15-minute expiry
+- Confirm session was not revoked in DB
+
+### Database connection failures
+
+- Re-check `DATABASE_URL`
+- Verify PostgreSQL service and credentials
+- Run `python init_db.py` after schema-level changes
+
+### CORS issues in dashboard
+
+- Confirm dashboard URL is present in backend `origins`
+- Ensure frontend API URL points to running backend
 
 ---
 
-This repository represents a serious, scalable foundation for identity access control, security operations, and centralized session governance. :rocket:
+Authentication Server Platform is a serious foundation for secure access control, session governance, and admin-led security operations at scale. :rocket:
