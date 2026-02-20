@@ -17,6 +17,9 @@ Key outcomes delivered by the product:
 - Admin-level controls for account state and session governance
 - Analytics to inspect login patterns and detect suspicious usage
 - Optional endpoint lockdown agent for managed Linux systems
+- Real-time session monitoring through dashboard-fed API polling
+- Login time and logout time visibility via session history endpoints
+- Extensible Linux endpoint telemetry channel for host/network activity reporting
 
 ## :sparkles: Product Capabilities
 
@@ -68,6 +71,30 @@ Monitoring features:
 - Timestamped anomaly feed endpoint
 - Dashboard polling integration for alert visibility
 
+### Real-Time Session Monitoring and Reporting
+
+Session monitoring is an operational first-class feature. Admin operators can inspect active/revoked JWT sessions, correlate user state, and track authentication timelines through dashboard views backed by API pagination.
+
+Monitoring and reporting coverage includes:
+
+- Near real-time dashboard refresh using repeated API pulls
+- Session table views with `created_at` and `is_active` state
+- User profile timelines that expose recent login and logout indicators
+- Centralized revocation actions with immediate operational feedback
+- Historical session insights for user behavior investigation
+
+### Linux Endpoint Telemetry (Registered Host Model)
+
+When Linux systems are registered to the server-side control model, each endpoint can be represented as a managed node that reports runtime telemetry to admin services. The current repo already includes the control-loop agent foundation (`static/client_agent.py`) and can be extended to include deeper host/network telemetry.
+
+Telemetry scope you can surface in admin reports:
+
+- Host identity and registration metadata (hostname, username, OS)
+- Session-level activity (login windows, active state, forced lock events)
+- File transfer metadata (download/share event summaries)
+- Packet/network summaries (top destinations, protocol counts, byte volume)
+- Process/file audit summaries from the endpoint
+
 ### Admin Dashboard Analytics
 
 The React dashboard provides operational metrics and visual telemetry over login/session behavior. It is intended for security and admin operators, not only developers.
@@ -91,6 +118,25 @@ Agent behavior:
 - On blocked status, disables display manager + TTY services
 - On unblocked status, restores services
 - Can be installed as a persistent systemd unit
+
+## :hammer_and_wrench: Tech Stack
+
+This product has a core stack and an extension stack for deep monitoring workloads.
+
+### Core stack in this repository
+
+- Backend API: `FastAPI`, `SQLAlchemy Async`, `python-jose`, `bcrypt`
+- Data store: `PostgreSQL` (`asyncpg`, `psycopg2-binary`)
+- Frontend: `React 18`, `Vite`, `MUI`, `Nivo`
+- Agent/control scripts: `Python`, `systemd`, shell automation
+
+### Monitoring extension stack for deep telemetry
+
+- Host metrics/process data: `psutil`
+- Packet inspection/flow summaries: `pyshark` or `scapy`
+- Linux audit events: `auditd` integration
+- Endpoint inventory/process/file visibility: `osquery`
+- Stream transport to backend: HTTPS JSON events or message queue
 
 ## :triangular_ruler: Architecture
 
@@ -250,6 +296,110 @@ The API is organized into public/user routes and admin routes. Protected routes 
 - `POST /admin/jwt-sessions/{session_id}/revoke` - revoke by session id
 - `GET /admin/user-stats` - active/inactive user summary
 - `GET /admin/user-profile/{user_id}` - profile and session activity
+
+Suggested telemetry APIs for extended monitoring surface:
+
+- `POST /agent/register` - register Linux endpoint with identity metadata
+- `POST /agent/heartbeat` - periodic host status update
+- `POST /agent/telemetry/network` - packet/flow aggregate reports
+- `POST /agent/telemetry/files` - download/share event summaries
+- `GET /admin/endpoints` - endpoint inventory and health
+- `GET /admin/reports/activity` - consolidated user and endpoint reports
+
+## :page_facing_up: Monitoring Code Patterns
+
+Below are implementation-ready patterns you can add so the admin dashboard receives the exact telemetry you described.
+
+### 1) Backend telemetry model example
+
+```python
+# models_telemetry.py
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, JSON
+from sqlalchemy.sql import func
+from models import Base
+
+class EndpointTelemetry(Base):
+    __tablename__ = "endpoint_telemetry"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    hostname = Column(String, nullable=False)
+    event_type = Column(String, nullable=False)  # packet_summary, file_share, download
+    payload = Column(JSON, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+```
+
+### 2) Backend ingestion endpoint example
+
+```python
+# main.py (example extension)
+from pydantic import BaseModel
+from sqlalchemy import select
+from models import User
+
+class TelemetryIn(BaseModel):
+    username: str
+    hostname: str
+    event_type: str
+    payload: dict
+
+@app.post("/agent/telemetry")
+async def ingest_telemetry(body: TelemetryIn):
+    async with async_session() as session:
+        result = await session.execute(select(User).where(User.username == body.username))
+        user = result.scalar_one_or_none()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        session.add(EndpointTelemetry(
+            user_id=user.id,
+            hostname=body.hostname,
+            event_type=body.event_type,
+            payload=body.payload
+        ))
+        await session.commit()
+    return {"message": "telemetry accepted"}
+```
+
+### 3) Linux agent packet summary pattern
+
+```python
+# agent_network_summary.py (example extension)
+import socket
+import psutil
+import requests
+
+API = "http://localhost:8000/agent/telemetry"
+USERNAME = "registered_user"
+
+def summarize_network():
+    net = psutil.net_io_counters()
+    return {
+        "bytes_sent": net.bytes_sent,
+        "bytes_recv": net.bytes_recv,
+        "packets_sent": net.packets_sent,
+        "packets_recv": net.packets_recv,
+    }
+
+def push():
+    requests.post(API, json={
+        "username": USERNAME,
+        "hostname": socket.gethostname(),
+        "event_type": "packet_summary",
+        "payload": summarize_network(),
+    }, timeout=10)
+```
+
+### 4) Admin report query pattern
+
+```python
+# report example (extension)
+@app.get("/admin/reports/activity")
+async def activity_report(limit: int = 200):
+    async with async_session() as session:
+        rows = await session.execute(
+            select(EndpointTelemetry).order_by(EndpointTelemetry.created_at.desc()).limit(limit)
+        )
+        return [r.__dict__ for r in rows.scalars().all()]
+```
 
 ## :key: Auth and Session Lifecycle
 
