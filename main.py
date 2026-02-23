@@ -1,34 +1,27 @@
-
-from collections import Counter
-
-
-import os
 import json
+import os
 import random
-import requests 
 import uuid
-from datetime import datetime, timedelta, timezone, date
+from collections import Counter
+from datetime import date, datetime, timedelta, timezone
 from typing import List
 
-
-
-
-from fastapi import FastAPI, HTTPException, Request, Depends, Path, status, Query
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
-from sqlalchemy.future import select
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy import func
+import requests
 from dotenv import load_dotenv
-
-from database import async_session
-from models import User, GridSession, JwtSession, AnomalyLog
-from auth_utils import hash_password, verify_password
-from grid_utils import generate_grid, sign_grid, verify_grid
-
-from jose import jwt, JWTError
+from fastapi import Depends, FastAPI, HTTPException, Path, Query, Request, status
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
+from fastapi.staticfiles import StaticFiles
+from jose import JWTError, jwt
+from pydantic import BaseModel
+from sqlalchemy import func
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.future import select
+
+from auth_utils import hash_password, verify_password
+from database import async_session
+from grid_utils import generate_grid, sign_grid, verify_grid
+from models import AnomalyLog, GridSession, JwtSession, User
 
 # Load environment variables
 load_dotenv()
@@ -36,17 +29,15 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 
 app = FastAPI()
-#pagination logic 
-from typing import Generic, TypeVar, List
+# pagination logic
+from typing import Generic, List, TypeVar
+
 from pydantic.generics import GenericModel
 
 T = TypeVar("T")
 IST = timezone(timedelta(hours=5, minutes=30))
 
-origins = [
-    "http://localhost:3000" , 
-    "http://localhost:5173"
-]
+origins = ["http://localhost:3000", "http://localhost:5173"]
 
 
 class PaginatedResponse(GenericModel, Generic[T]):
@@ -72,11 +63,12 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+
 # ---------------------------
 # Pydantic Schemas
 # ---------------------------
 class UserCreate(BaseModel):
-    username: str 
+    username: str
     password: str
     name: str | None = None
     age: int | None = None
@@ -89,18 +81,21 @@ class UserCreate(BaseModel):
     department: str | None = None
     address: str | None = None
 
+
 # --- Input for login ---
 class UserLogin(BaseModel):
     username: str
     password: str
 
+
 class AdminLogin(BaseModel):
     username: str
     password: str
 
+
 # --- Output user info ---
 class UserOut(BaseModel):
-    id: int   # 👈 back to 'id' to match users.id
+    id: int  # 👈 back to 'id' to match users.id
     username: str
     name: str | None = None
     age: int | None = None
@@ -118,23 +113,27 @@ class UserOut(BaseModel):
     class Config:
         orm_mode = True
 
+
 # --- For sessions ---
 class SessionOut(BaseModel):
-    id: int          # PK of session table
-    user_id: int     # FK to users.id
+    id: int  # PK of session table
+    user_id: int  # FK to users.id
     username: str
     created_at: str
     is_active: bool
+
 
 class UserBlockRequest(BaseModel):
     username: str
     block: bool
 
+
 class UserSessionOut(BaseModel):
-    id: int        # PK of session
-    user_id: int   # FK to users.id
+    id: int  # PK of session
+    user_id: int  # FK to users.id
     created_at: str
     is_active: bool
+
 
 # --- JWT SESSION TRACKING ---
 class JwtSessionOut(BaseModel):
@@ -165,7 +164,9 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
     async with async_session() as session:
         result = await session.execute(
-            select(JwtSession).where(JwtSession.jti == jti, JwtSession.is_active == True)
+            select(JwtSession).where(
+                JwtSession.jti == jti, JwtSession.is_active == True
+            )
         )
         jwt_session = result.scalar_one_or_none()
         if not jwt_session:
@@ -177,6 +178,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
             raise credentials_exception
         return user
 
+
 # ---------------------------
 # Endpoints
 # ---------------------------
@@ -186,10 +188,13 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 async def root():
     return {"message": "Grid Auth Server is running!"}
 
+
 # Endpoint for client agent to check block status
+from sqlalchemy.future import select
+
 from database import async_session
 from models import User
-from sqlalchemy.future import select
+
 
 @app.get("/api/client-status")
 async def client_status(username: str):
@@ -200,6 +205,7 @@ async def client_status(username: str):
             return {"error": "User not found", "is_blocked": False}
         return {"is_blocked": getattr(user, "is_blocked", False)}
 
+
 @app.post("/register")
 async def register(user: UserCreate):
     print("Received registration data:", user.dict())  # Debug print
@@ -209,21 +215,17 @@ async def register(user: UserCreate):
                 # User identity fields
                 username=user.username,
                 password_hash=hash_password(user.password),
-                
                 # Personal information
                 name=user.name,
                 age=user.age,
                 dob=user.dob,
-                
                 # Professional information
                 rank=user.rank,
                 department=user.department,
                 date_of_joining=user.date_of_joining,
-                
                 # Contact information
                 contact_no=user.contact_no,
                 address=user.address,
-                
                 # Location information
                 ip=user.ip,
                 location=user.location,
@@ -236,38 +238,41 @@ async def register(user: UserCreate):
                 raise HTTPException(status_code=400, detail="Username already exists")
     return {"message": "User registered successfully"}
 
+
 @app.post("/login")
 async def login(user: UserLogin, request: Request):
     async with async_session() as session:
-        result = await session.execute(select(User).where(User.username == user.username))
+        result = await session.execute(
+            select(User).where(User.username == user.username)
+        )
         db_user = result.scalar_one_or_none()
         if not db_user or not verify_password(user.password, db_user.password_hash):
             raise HTTPException(status_code=401, detail="Invalid credentials")
         jti = str(uuid.uuid4())
         jwt_session = JwtSession(
-            user_id=db_user.id,
-            jti=jti,
-            created_at=datetime.now(IST) ,
-            is_active=True
+            user_id=db_user.id, jti=jti, created_at=datetime.now(IST), is_active=True
         )
         session.add(jwt_session)
         await session.commit()
 
-        #anomaly
+        # anomaly
         result = await session.execute(
             select(JwtSession)
             .where(JwtSession.user_id == db_user.id)
             .where(JwtSession.is_active == True)
             .where(JwtSession.jti != jti)  # exclude the current session
-            .where(JwtSession.created_at + timedelta(minutes=15) > datetime.now(IST))  # still valid
+            .where(
+                JwtSession.created_at + timedelta(minutes=15) > datetime.now(IST)
+            )  # still valid
         )
         other_active_sessions = result.scalars().all()
 
         if other_active_sessions:
             from models import AnomalyLog
+
             anomaly = AnomalyLog(
                 user_id=db_user.id,
-                description=f"Concurrent login detected for {db_user.username}"
+                description=f"Concurrent login detected for {db_user.username}",
             )
             session.add(anomaly)
             await session.commit()
@@ -277,11 +282,12 @@ async def login(user: UserLogin, request: Request):
         token_payload = {
             "sub": str(db_user.id),  # <-- FIX: use int, not str
             "jti": jti,
-            "exp": datetime.utcnow() + timedelta(minutes=15)  # <-- 15 MIN EXPIRY
+            "exp": datetime.utcnow() + timedelta(minutes=15),  # <-- 15 MIN EXPIRY
         }
         access_token = jwt.encode(token_payload, SECRET_KEY, algorithm=ALGORITHM)
     return {"access_token": access_token, "token_type": "bearer"}
-    
+
+
 @app.post("/logout")
 async def user_logout(token: str = Depends(oauth2_scheme)):
     """
@@ -300,7 +306,9 @@ async def user_logout(token: str = Depends(oauth2_scheme)):
 
     async with async_session() as session:
         result = await session.execute(
-            select(JwtSession).where(JwtSession.jti == jti, JwtSession.user_id == user_id)
+            select(JwtSession).where(
+                JwtSession.jti == jti, JwtSession.user_id == user_id
+            )
         )
         jwt_session = result.scalar_one_or_none()
         if not jwt_session or not jwt_session.is_active:
@@ -319,7 +327,6 @@ async def logout_debug(token: str = Depends(oauth2_scheme)):
         return {"decoded_payload": payload}
     except JWTError as e:
         raise HTTPException(status_code=401, detail=f"JWTError: {str(e)}")
-
 
 
 # @app.post("/grid-challenge", response_model=GridChallengeResponse)
@@ -389,21 +396,25 @@ async def list_anomalies():
                 "id": anomaly.id,
                 "username": user.username,
                 "description": anomaly.description,
-                "created_at": str(anomaly.created_at)
+                "created_at": str(anomaly.created_at),
             }
             for anomaly, user in anomalies
         ]
 
 
 @app.post("/admin/logout")
-async def admin_logout(current_user: User = Depends(get_current_user), token: str = Depends(oauth2_scheme)):
+async def admin_logout(
+    current_user: User = Depends(get_current_user), token: str = Depends(oauth2_scheme)
+):
     """
     Logs out an admin by revoking the current JWT session.
     Only works for users with is_admin=True.
     """
     # ✅ Security check: ensure only admins can hit this endpoint
     if not current_user.is_admin:
-        raise HTTPException(status_code=403, detail="Not authorized to access admin logout")
+        raise HTTPException(
+            status_code=403, detail="Not authorized to access admin logout"
+        )
 
     async with async_session() as session:
         try:
@@ -414,11 +425,15 @@ async def admin_logout(current_user: User = Depends(get_current_user), token: st
 
         # Find admin session
         result = await session.execute(
-            select(JwtSession).where(JwtSession.jti == jti, JwtSession.user_id == current_user.id)
+            select(JwtSession).where(
+                JwtSession.jti == jti, JwtSession.user_id == current_user.id
+            )
         )
         jwt_session = result.scalar_one_or_none()
         if not jwt_session or not jwt_session.is_active:
-            raise HTTPException(status_code=404, detail="Active admin session not found")
+            raise HTTPException(
+                status_code=404, detail="Active admin session not found"
+            )
 
         # Mark session as inactive
         jwt_session.is_active = False
@@ -428,16 +443,15 @@ async def admin_logout(current_user: User = Depends(get_current_user), token: st
     await broadcast_session_update()
 
     return {"message": "Admin logged out successfully"}
- 
 
- 
+
 # Add this helper function in main.py:
 def format_datetime_for_frontend(dt):
     """Convert UTC datetime to IST and format as string"""
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=timezone.utc)
-    
-    ist = pytz.timezone('Asia/Kolkata')
+
+    ist = pytz.timezone("Asia/Kolkata")
     ist_time = dt.astimezone(ist)
     return ist_time.isoformat()
 
@@ -445,7 +459,9 @@ def format_datetime_for_frontend(dt):
 @app.post("/admin/login")
 async def admin_login(admin: AdminLogin, request: Request):
     async with async_session() as session:
-        result = await session.execute(select(User).where(User.username == admin.username))
+        result = await session.execute(
+            select(User).where(User.username == admin.username)
+        )
         db_user = result.scalar_one_or_none()
         if not db_user or not verify_password(admin.password, db_user.password_hash):
             raise HTTPException(status_code=401, detail="Invalid credentials")
@@ -454,10 +470,7 @@ async def admin_login(admin: AdminLogin, request: Request):
         # --- JWT SESSION TRACKING ---
         jti = str(uuid.uuid4())
         jwt_session = JwtSession(
-            user_id=db_user.id,
-            jti=jti,
-            created_at=datetime.now(IST),
-            is_active=True
+            user_id=db_user.id, jti=jti, created_at=datetime.now(IST), is_active=True
         )
         session.add(jwt_session)
         await session.commit()
@@ -465,10 +478,11 @@ async def admin_login(admin: AdminLogin, request: Request):
         token_payload = {
             "sub": db_user.id,  # <-- FIX: use int, not str
             "jti": jti,
-            "exp": datetime.utcnow() + timedelta(minutes=15)  # <-- 15 MIN EXPIRY
+            "exp": datetime.utcnow() + timedelta(minutes=15),  # <-- 15 MIN EXPIRY
         }
         access_token = jwt.encode(token_payload, SECRET_KEY, algorithm=ALGORITHM)
     return {"access_token": access_token, "token_type": "bearer"}
+
 
 @app.get("/admin/users", response_model=List[UserOut])
 async def list_users():
@@ -477,7 +491,9 @@ async def list_users():
         users = result.scalars().all()
         user_list = []
         for u in users:
-            print(f"Debug - User data: id={u.id}, username={u.username}, rank={u.rank}, department={u.department}")  # Debug print
+            print(
+                f"Debug - User data: id={u.id}, username={u.username}, rank={u.rank}, department={u.department}"
+            )  # Debug print
             user_data = UserOut(
                 id=u.id,
                 username=u.username,
@@ -492,10 +508,11 @@ async def list_users():
                 department=u.department,
                 address=u.address,
                 is_admin=u.is_admin,
-                is_blocked=u.is_blocked
+                is_blocked=u.is_blocked,
             )
             user_list.append(user_data)
         return user_list
+
 
 # @app.get("/admin/sessions", response_model=PaginatedResponse[SessionOut])
 # async def list_sessions(skip: int = Query(0, ge=0), limit: int = Query(10, ge=1, le=100)):
@@ -525,10 +542,11 @@ async def list_users():
 #                 "data": sessions
 #             }
 
-        
 
 @app.get("/admin/jwt-sessions", response_model=PaginatedResponse[JwtSessionOut])
-async def list_jwt_sessions(skip: int = Query(0, ge=0), limit: int = Query(10, ge=1, le=1000)):
+async def list_jwt_sessions(
+    skip: int = Query(0, ge=0), limit: int = Query(10, ge=1, le=1000)
+):
     async with async_session() as session:
         total_result = await session.execute(select(func.count(JwtSession.id)))
         total = total_result.scalar() or 0
@@ -542,19 +560,18 @@ async def list_jwt_sessions(skip: int = Query(0, ge=0), limit: int = Query(10, g
         )
         sessions = []
         for jwt_session, user in result.all():
-            sessions.append(JwtSessionOut(
-                id=jwt_session.id,
-                username=user.username,
-                created_at=str(jwt_session.created_at),
-                is_active=jwt_session.is_active
-            ))
-        return {
-            "total": total,
-            "skip": skip,
-            "limit": limit,
-            "data": sessions
-        }
-#error for db_user- changed
+            sessions.append(
+                JwtSessionOut(
+                    id=jwt_session.id,
+                    username=user.username,
+                    created_at=str(jwt_session.created_at),
+                    is_active=jwt_session.is_active,
+                )
+            )
+        return {"total": total, "skip": skip, "limit": limit, "data": sessions}
+
+
+# error for db_user- changed
 # New endpoint to update user info
 class UserUpdateRequest(BaseModel):
     username: str
@@ -563,15 +580,18 @@ class UserUpdateRequest(BaseModel):
     name: str | None = None
     age: int | None = None
 
+
 @app.post("/admin/update-user")
 async def update_user(req: UserUpdateRequest):
     async with async_session() as session:
-        result = await session.execute(select(User).where(User.username == req.username))
+        result = await session.execute(
+            select(User).where(User.username == req.username)
+        )
         db_user = result.scalar_one_or_none()
-        
+
         if not db_user:
             raise HTTPException(status_code=404, detail="User not found")
-            
+
         if req.rank is not None:
             db_user.rank = req.rank
         if req.department is not None:
@@ -580,14 +600,17 @@ async def update_user(req: UserUpdateRequest):
             db_user.name = req.name
         if req.age is not None:
             db_user.age = req.age
-            
+
         await session.commit()
         return {"message": "User updated successfully"}
+
 
 @app.post("/admin/block-user")
 async def block_user(req: UserBlockRequest):
     async with async_session() as session:
-        result = await session.execute(select(User).where(User.username == req.username))
+        result = await session.execute(
+            select(User).where(User.username == req.username)
+        )
         db_user = result.scalar_one_or_none()
 
         if not db_user:
@@ -598,10 +621,13 @@ async def block_user(req: UserBlockRequest):
 
     return {"message": f"User {'blocked' if req.block else 'unblocked'} successfully"}
 
+
 @app.post("/admin/jwt-sessions/{session_id}/revoke")
 async def revoke_jwt_session(session_id: int = Path(...)):
     async with async_session() as session:
-        result = await session.execute(select(JwtSession).where(JwtSession.id == session_id))
+        result = await session.execute(
+            select(JwtSession).where(JwtSession.id == session_id)
+        )
         jwt_session = result.scalar_one_or_none()
         if not jwt_session:
             raise HTTPException(status_code=404, detail="Session not found")
@@ -609,9 +635,25 @@ async def revoke_jwt_session(session_id: int = Path(...)):
         await session.commit()
     return {"message": "Session revoked"}
 
+
+@app.delete("/admin/jwt-sessions/{session_id}")
+async def delete_jwt_session(session_id: int = Path(...)):
+    async with async_session() as session:
+        result = await session.execute(
+            select(JwtSession).where(JwtSession.id == session_id)
+        )
+        jwt_session = result.scalar_one_or_none()
+        if not jwt_session:
+            raise HTTPException(status_code=404, detail="Session not found")
+        await session.delete(jwt_session)
+        await session.commit()
+    return {"message": "Session deleted"}
+
+
 # ---------------------------
 # NEW: Admin Dashboard Stats & User Profile Endpoints
 # ---------------------------
+
 
 @app.get("/admin/user-stats")
 async def user_stats():
@@ -634,6 +676,7 @@ async def user_stats():
         inactive_users = len(user_ids) - active_users
 
         return {"active_users": active_users, "inactive_users": inactive_users}
+
 
 @app.get("/admin/user-profile/{user_id}")
 async def user_profile(user_id: int):
@@ -672,8 +715,7 @@ async def user_profile(user_id: int):
 
         # Activity data for graph (list of login times)
         activity_data = [
-            {"login": str(s.created_at), "active": s.is_active}
-            for s in sessions
+            {"login": str(s.created_at), "active": s.is_active} for s in sessions
         ]
 
         return {
@@ -681,13 +723,14 @@ async def user_profile(user_id: int):
                 "id": user.id,
                 "username": user.username,
                 "is_admin": user.is_admin,
-                "is_blocked": getattr(user, "is_blocked", False)
+                "is_blocked": getattr(user, "is_blocked", False),
             },
             "session_logs": session_logs,
             "last_login": str(last_login) if last_login else None,
             "last_logout": str(last_logout) if last_logout else None,
-            "activity_data": activity_data
+            "activity_data": activity_data,
         }
+
 
 # ---------------------------
 # User Portal Endpoints
@@ -712,6 +755,7 @@ async def user_profile(user_id: int):
 #             ) for s in sessions
 #         ]
 
+
 @app.get("/user/jwt-sessions")
 async def user_jwt_sessions(current_user: User = Depends(get_current_user)):
     async with async_session() as session:
@@ -731,13 +775,9 @@ async def user_jwt_sessions(current_user: User = Depends(get_current_user)):
         ]
 
 
-
 @app.get("/api/check-username")
 async def check_username(username: str = Query(...)):
     async with async_session() as session:
         result = await session.execute(select(User).where(User.username == username))
         user = result.scalar_one_or_none()
         return {"exists": bool(user)}
-
-
-
