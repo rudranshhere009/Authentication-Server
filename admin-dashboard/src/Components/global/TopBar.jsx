@@ -1,6 +1,3 @@
-
-
-
 import {
   Box,
   Typography,
@@ -11,280 +8,309 @@ import {
   useMediaQuery,
   Button,
   Tooltip,
+  Badge,
 } from "@mui/material";
-import MenuIcon from '@mui/icons-material/Menu';
-import { Link as RouterLink } from "react-router-dom";
-import Logo from "../../Assets/logo.png";
-import '../../index.css';
+import MenuIcon from "@mui/icons-material/Menu";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import LogoutIcon from "@mui/icons-material/Logout";
-import DarkModeIcon from '@mui/icons-material/DarkMode';
-import LightModeIcon from '@mui/icons-material/LightMode';
 
-const TopBar = ({ toggleSidebar, sidebarOpen, onLogout, darkMode, toggleDarkMode }) => {
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import "../../index.css";
+
+const C = {
+  red: "#DC2626",
+  redLt: "#EF4444",
+  redDk: "#B91C1C",
+  redGlow: "rgba(220,38,38,0.14)",
+  char700: "#0F1117",
+  char600: "#161B22",
+  char500: "#1C2128",
+  char400: "#2D333B",
+  text100: "#F0F6FC",
+  text300: "#8B949E",
+  text500: "#484F58",
+  emerald: "#10B981",
+  amber: "#F59E0B",
+};
+
+const TopBar = ({ toggleSidebar, onLogout, anomalyCount = 0 }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const mobile = useMediaQuery(theme.breakpoints.down("md"));
+  const navigate = useNavigate();
 
   return (
     <AppBar
       position="sticky"
       elevation={0}
       sx={{
-        bgcolor: theme.palette.background.paper,
-        color: theme.palette.text.primary,
-        borderBottom: `1px solid ${theme.palette.divider}`,
-        boxShadow: darkMode 
-          ? '0 4px 20px rgba(0, 0, 0, 0.3)' 
-          : '0 2px 8px rgba(0, 98, 255, 0.08)',
+        bgcolor: C.char700,
+        color: C.text100,
+        borderBottom: `1px solid ${C.char400}`,
+        boxShadow: "none",
         zIndex: theme.zIndex.appBar - 1,
-        width: '100%',
-        left: 0,
-        right: 0,
+        width: "100%",
+        backgroundImage: "none",
       }}
     >
       <Toolbar
         sx={{
           px: { xs: 2, sm: 3 },
-          minHeight: { xs: 56, sm: 64 },
-          height: { xs: 56, sm: 64 },
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          minHeight: { xs: 56, sm: 60 },
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
-        <Box sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: { xs: 1, sm: 1.5 },
-          flex: 1,
-        }}>
-          {/* Mobile menu button */}
-          {isMobile && (
+        {/* ── Left ── */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          {mobile && (
             <IconButton
               edge="start"
-              color="primary"
-              aria-label="open navigation menu"
               onClick={toggleSidebar}
+              aria-label="menu"
+              disableRipple
+              disableTouchRipple
               sx={{
-                padding: '8px',
-                '&:hover': {
-                  bgcolor: `${theme.palette.primary.main}10`,
-                  transform: 'scale(1.05)',
+                color: C.text500,
+                width: 34,
+                height: 34,
+                borderRadius: "8px",
+                transition: "color 0.1s, background-color 0.1s",
+                "&:hover": { bgcolor: C.redGlow, color: C.redLt },
+                "&:focus": {
+                  outline: "none",
+                  boxShadow: "none",
+                  bgcolor: "transparent",
                 },
-                transition: 'all 0.2s ease',
+                "&:focus-visible": {
+                  outline: "none",
+                  boxShadow: "none",
+                  bgcolor: "transparent",
+                },
+                "&.Mui-focusVisible": {
+                  outline: "none",
+                  boxShadow: "none",
+                  bgcolor: "transparent",
+                },
+                "&:active": { bgcolor: "transparent", boxShadow: "none" },
+                "&.MuiButtonBase-root:focus-visible": {
+                  outline: "none",
+                  boxShadow: "none",
+                },
               }}
             >
-              <MenuIcon />
+              <MenuIcon fontSize="small" />
             </IconButton>
           )}
 
-          {/* Logo and Title */}
-          <Box sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: { xs: 0.75, sm: 1.25 },
-          }}>
-            <Box
-              component={RouterLink}
-              to="/"
-              sx={{
-                height: { xs: 32, sm: 40 },
-                width: { xs: 32, sm: 40 },
-                overflow: 'hidden',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: '8px',
-                bgcolor: `${theme.palette.primary.main}08`,
-                p: 0.5,
-                flexShrink: 0,
-                textDecoration: 'none',
-                transition: 'all 0.2s ease',
-                '&:hover': {
-                  bgcolor: `${theme.palette.primary.main}12`,
-                  transform: 'scale(1.05)',
-                },
-              }}
-            >
-              <img
-                src={Logo}
-                alt="Admin Logo"
-                style={{
-                  height: '100%',
-                  width: 'auto',
-                  objectFit: 'contain',
-                  filter: darkMode ? 'brightness(1.2)' : 'none',
-                }}
-              />
-            </Box>
-
-            {/* Title - responsive sizing */}
-            <Typography
-              variant="h6"
-              component={RouterLink}
-              to="/"
-              sx={{
-                color: theme.palette.text.primary,
-                fontWeight: 700,
-                fontSize: { xs: "1rem", sm: "1.1rem", md: "1.25rem" },
-                letterSpacing: "0.3px",
-                textDecoration: "none",
-                background: darkMode 
-                  ? `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`
-                  : `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                transition: "all 0.3s ease",
-                "&:hover": {
-                  transform: 'translateY(-1px)',
-                  textShadow: darkMode 
-                    ? '0 2px 8px rgba(79, 195, 247, 0.4)'
-                    : '0 2px 8px rgba(0, 98, 255, 0.3)',
-                },
-                whiteSpace: 'nowrap',
-                display: {
-                  xs: isMobile ? 'block' : 'none',
-                  sm: 'block',
-                },
-              }}
-            >
-              <Box
-                component="span"
-                sx={{
-                  display: { xs: 'none', sm: 'inline' }
-                }}
-              >
-                Admin Dashboard
-              </Box>
-              <Box
-                component="span"
-                sx={{
-                  display: { xs: 'inline', sm: 'none' }
-                }}
-              >
-                Admin
-              </Box>
-            </Typography>
-          </Box>
-        </Box>
-
-        {/* Right side - Controls */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: { xs: 1, sm: 1.5 },
-            flexShrink: 0,
-          }}
-        >
-          {/* Dark Mode Toggle */}
-          <Tooltip title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}>
-            <IconButton
-              onClick={toggleDarkMode}
-              sx={{
-                color: theme.palette.text.primary,
-                bgcolor: darkMode 
-                  ? 'rgba(79, 195, 247, 0.1)' 
-                  : 'rgba(0, 98, 255, 0.1)',
-                width: 40,
-                height: 40,
-                '&:hover': {
-                  bgcolor: darkMode 
-                    ? 'rgba(79, 195, 247, 0.2)' 
-                    : 'rgba(0, 98, 255, 0.2)',
-                  transform: 'scale(1.05)',
-                },
-                transition: 'all 0.2s ease',
-              }}
-            >
-              {darkMode ? <LightModeIcon /> : <DarkModeIcon />}
-            </IconButton>
-          </Tooltip>
-
-          {/* Online status */}
           <Box
+            component={RouterLink}
+            to="/"
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: { xs: 0.5, sm: 0.75 },
-              color: theme.palette.text.secondary,
-              fontSize: "0.875rem",
-              fontWeight: 500,
+              gap: 1,
+              textDecoration: "none",
             }}
           >
             <Box
               sx={{
-                width: { xs: 6, sm: 8 },
-                height: { xs: 6, sm: 8 },
+                width: 36,
+                height: 36,
+                borderRadius: "9px",
+                background: `linear-gradient(135deg, ${C.red} 0%, ${C.redDk} 100%)`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow: `0 4px 14px rgba(220,38,38,0.45)`,
+                flexShrink: 0,
+                fontSize: "1.2rem",
+                lineHeight: 1,
+                userSelect: "none",
+                transition: "box-shadow 0.2s ease, transform 0.2s ease",
+                "&:hover": {
+                  boxShadow: `0 6px 22px rgba(220,38,38,0.65)`,
+                  transform: "scale(1.05)",
+                },
+              }}
+            >
+              ⚡
+            </Box>
+
+            <Box>
+              <Typography
+                sx={{
+                  fontWeight: 900,
+                  fontSize: { xs: "0.85rem", sm: "0.9rem" },
+                  color: C.text100,
+                  letterSpacing: "2px",
+                  display: { xs: "none", sm: "block" },
+                  fontFamily: '"Orbitron", sans-serif',
+                  lineHeight: 1,
+                  "& span": { color: C.redLt },
+                }}
+              >
+                AP<span>EX</span>
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "0.52rem",
+                  color: C.text500,
+                  letterSpacing: "0.15em",
+                  fontFamily: '"Space Grotesk", sans-serif',
+                  textTransform: "uppercase",
+                  display: { xs: "none", sm: "block" },
+                  lineHeight: 1,
+                }}
+              >
+                Auth Platform
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+
+        {/* ── Right ── */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          {/* Live indicator */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 0.75,
+              bgcolor: C.char600,
+              border: `1px solid ${C.char400}`,
+              borderRadius: "8px",
+              px: 1.25,
+              py: 0.5,
+            }}
+          >
+            <Box
+              sx={{
+                width: 7,
+                height: 7,
                 borderRadius: "50%",
-                bgcolor: "#4caf50",
+                bgcolor: C.emerald,
                 animation: "pulse 2s infinite",
                 "@keyframes pulse": {
-                  "0%": { 
-                    transform: "scale(0.95)", 
-                    boxShadow: "0 0 0 0 rgba(76, 175, 80, 0.7)" 
+                  "0%": {
+                    transform: "scale(0.95)",
+                    boxShadow: "0 0 0 0 rgba(16,185,129,0.7)",
                   },
-                  "70%": { 
-                    transform: "scale(1)", 
-                    boxShadow: "0 0 0 6px rgba(76, 175, 80, 0)" 
+                  "70%": {
+                    transform: "scale(1)",
+                    boxShadow: "0 0 0 6px rgba(16,185,129,0)",
                   },
-                  "100%": { 
-                    transform: "scale(0.95)", 
-                    boxShadow: "0 0 0 0 rgba(76, 175, 80, 0)" 
+                  "100%": {
+                    transform: "scale(0.95)",
+                    boxShadow: "0 0 0 0 rgba(16,185,129,0)",
                   },
                 },
               }}
             />
             <Typography
-              variant="body2"
               sx={{
-                color: theme.palette.text.secondary,
-                fontSize: { xs: "0.75rem", sm: "0.875rem" },
-                fontWeight: 500,
+                color: C.text500,
+                fontSize: "0.72rem",
+                fontWeight: 600,
+                fontFamily: '"Space Grotesk", sans-serif',
                 display: { xs: "none", sm: "block" },
-                whiteSpace: "nowrap",
+                letterSpacing: "0.04em",
               }}
             >
               Online
             </Typography>
           </Box>
 
-          {/* Logout button */}
-          <Button
-            variant="outlined"
-            color="primary"
-            startIcon={<LogoutIcon />}
-            onClick={onLogout}
-            sx={{
-              textTransform: "none",
-              fontWeight: 600,
-              fontSize: { xs: "0.75rem", sm: "0.875rem" },
-              borderRadius: "8px",
-              borderColor: theme.palette.primary.main,
-              color: theme.palette.primary.main,
-              "&:hover": {
-                bgcolor: `${theme.palette.primary.main}10`,
-                borderColor: theme.palette.primary.main,
-              },
-            }}
-          >
-            <Box
-              component="span"
+          {/* Anomaly bell */}
+          {anomalyCount > 0 && (
+            <Tooltip title={`${anomalyCount} anomaly alert(s)`}>
+              <IconButton
+                onClick={() => navigate("/anomalies")}
+                sx={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: "8px",
+                  bgcolor: `${C.amber}12`,
+                  border: `1px solid ${C.amber}35`,
+                  color: C.amber,
+                  "&:hover": {
+                    bgcolor: `${C.amber}22`,
+                    borderColor: C.amber,
+                  },
+                }}
+              >
+                <Badge
+                  badgeContent={anomalyCount}
+                  sx={{
+                    "& .MuiBadge-badge": {
+                      bgcolor: C.red,
+                      color: "#fff",
+                      fontSize: "0.6rem",
+                      minWidth: 16,
+                      height: 16,
+                      fontFamily: '"Space Grotesk", sans-serif',
+                      top: -2,
+                      right: -2,
+                      animation: "anomalyPulse 2s infinite",
+                    },
+                  }}
+                >
+                  <WarningAmberIcon sx={{ fontSize: 17 }} />
+                </Badge>
+              </IconButton>
+            </Tooltip>
+          )}
+
+          {/* Notification icon (no anomalies) */}
+          {anomalyCount === 0 && (
+            <Tooltip title="No active alerts">
+              <IconButton
+                sx={{
+                  width: 34,
+                  height: 34,
+                  borderRadius: "8px",
+                  color: C.text500,
+                  "&:hover": { bgcolor: C.redGlow, color: C.redLt },
+                }}
+              >
+                <NotificationsIcon sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Tooltip>
+          )}
+
+          {/* Logout */}
+          <Tooltip title="Logout">
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<LogoutIcon sx={{ fontSize: "0.95rem !important" }} />}
+              onClick={onLogout}
               sx={{
-                display: { xs: 'none', sm: 'inline' }
+                textTransform: "none",
+                fontWeight: 600,
+                fontSize: "0.78rem",
+                fontFamily: '"Space Grotesk", sans-serif',
+                borderRadius: "8px",
+                borderColor: C.char400,
+                color: C.text300,
+                px: { xs: 1.5, sm: 2 },
+                "&:hover": {
+                  borderColor: C.redLt,
+                  color: C.redLt,
+                  bgcolor: `rgba(220,38,38,0.07)`,
+                },
+                transition: "all 0.2s ease",
               }}
             >
-              Logout
-            </Box>
-            <Box
-              component="span"
-              sx={{
-                display: { xs: 'inline', sm: 'none' }
-              }}
-            >
-              Exit
-            </Box>
-          </Button>
+              <Box
+                component="span"
+                sx={{ display: { xs: "none", sm: "inline" } }}
+              >
+                Logout
+              </Box>
+            </Button>
+          </Tooltip>
         </Box>
       </Toolbar>
     </AppBar>

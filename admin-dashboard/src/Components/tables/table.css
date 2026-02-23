@@ -1,212 +1,182 @@
-/* table.css */
+/* ── table.css — APEX Dark Charcoal + Orange Theme ──────────────────────────── */
 
-/* Main table container */
 .custom-table-container {
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 32, 96, 0.1);
-  margin-top: 16px;
-  overflow-x: auto;
+    border-radius: 12px;
+    overflow-x: auto;
+    border: 1px solid #3a3228;
+    background: #221d16;
 }
 
-/* Light theme table header styling */
+/* Header */
 .MuiTableHead-root {
-  background-color: #f0f2f5; /* light-gray from your theme */
+    background-color: #1a1510;
 }
 
 .MuiTableCell-head {
-  font-weight: 600;
-  color: #002060; /* navy-blue from your theme */
-  font-size: 0.875rem;
+    font-weight: 700 !important;
+    color: #fb8b24 !important;
+    font-size: 0.72rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    background-color: #1a1510 !important;
+    border-bottom: 1px solid #3a3228 !important;
+    padding: 12px 16px !important;
 }
 
-/* Dark theme table header styling */
-[data-theme="dark"] .MuiTableHead-root {
-  background-color: #141b2d; /* Dark secondary background from your theme */
-}
-
-[data-theme="dark"] .MuiTableCell-head {
-  color: #4fc3f7 !important; /* Bright blue from your theme */
-  font-weight: 600;
-  font-size: 0.875rem;
-}
-
-/* Light theme table body styling */
+/* Body rows */
 .MuiTableBody-root .MuiTableRow-root {
-  transition: background-color 0.2s ease;
-  background-color: #ffffff; /* White background for all data rows */
+    background-color: #221d16;
+    transition: background-color 0.15s ease;
 }
 
 .MuiTableBody-root .MuiTableRow-root:hover {
-  background-color: rgba(0, 32, 96, 0.04) !important; /* navy-blue with 4% opacity */
+    background-color: rgba(232, 93, 4, 0.06) !important;
+}
+
+.MuiTableBody-root .MuiTableRow-root:nth-of-type(odd) {
+    background-color: #1e1912;
 }
 
 .MuiTableCell-body {
-  color: #343a40 !important; /* dark-gray from your theme */
-  font-size: 0.875rem;
-  border-bottom: 1px solid #e0e2e6 !important; /* medium-gray from your theme */
+    color: #f5f1ec !important;
+    font-size: 0.86rem !important;
+    border-bottom: 1px solid #3a3228 !important;
+    padding: 10px 16px !important;
 }
 
-/* Dark theme table body styling */
-[data-theme="dark"] .MuiTableBody-root .MuiTableRow-root {
-  background-color: #ffffff !important; /* White background for all data rows in dark theme */
-  transition: background-color 0.2s ease;
-}
-
-[data-theme="dark"] .MuiTableBody-root .MuiTableRow-root:hover {
-  background-color: #f5f5f5 !important; /* Light gray on hover for better contrast */
-}
-
-[data-theme="dark"] .MuiTableCell-body {
-  color: #000000 !important; /* Black text for readability on white background */
-  font-size: 0.875rem;
-  border-bottom: 1px solid #e0e2e6 !important;
-}
-
-/* Remove alternating row colors completely */
-.MuiTableBody-root .MuiTableRow-root:nth-of-type(odd) {
-  background-color: inherit; /* Use inherited background instead of alternating */
-}
-
-[data-theme="dark"] .MuiTableBody-root .MuiTableRow-root:nth-of-type(odd) {
-  background-color: #ffffff !important; /* Ensure white background even for odd rows */
-}
-
-/* Action buttons styling - Light theme */
+/* Action buttons */
 .table-action-button {
-  padding: 6px 12px !important;
-  font-size: 0.75rem !important;
-  text-transform: none !important;
-  box-shadow: none !important;
+    padding: 5px 12px !important;
+    font-size: 0.75rem !important;
+    text-transform: none !important;
+    box-shadow: none !important;
+    border-radius: 7px !important;
+    font-weight: 600 !important;
 }
 
-/* Dark theme button styling fixes - More specific selectors */
-[data-theme="dark"] .table-action-button.MuiButton-containedError,
-[data-theme="dark"] .MuiButton-containedError {
-  background-color: #f44336 !important; /* Solid red background */
-  color: #ffffff !important; /* White text */
-  border: 1px solid #f44336 !important;
-}
-
-[data-theme="dark"] .table-action-button.MuiButton-containedError:hover,
-[data-theme="dark"] .MuiButton-containedError:hover {
-  background-color: #d32f2f !important; /* Darker red on hover */
-  border-color: #d32f2f !important;
-}
-
-[data-theme="dark"] .table-action-button.MuiButton-outlinedError,
-[data-theme="dark"] .MuiButton-outlinedError {
-  border-color: #f44336 !important; /* Red border */
-  color: #f44336 !important; /* Red text */
-  background-color: #ffffff !important; /* White background for visibility */
-}
-
-[data-theme="dark"] .table-action-button.MuiButton-outlinedError:hover,
-[data-theme="dark"] .MuiButton-outlinedError:hover {
-  background-color: rgba(244, 67, 54, 0.1) !important;
-  border-color: #f44336 !important;
-}
-
-[data-theme="dark"] .table-action-button.MuiButton-outlinedSuccess,
-[data-theme="dark"] .MuiButton-outlinedSuccess {
-  border-color: #4caf50 !important; /* Green border */
-  color: #4caf50 !important; /* Green text */
-  background-color: #ffffff !important; /* White background for visibility */
-}
-
-[data-theme="dark"] .table-action-button.MuiButton-outlinedSuccess:hover,
-[data-theme="dark"] .MuiButton-outlinedSuccess:hover {
-  background-color: rgba(76, 175, 80, 0.1) !important;
-  border-color: #4caf50 !important;
-}
-
-/* Primary contained buttons in dark theme */
-[data-theme="dark"] .table-action-button.MuiButton-contained,
-[data-theme="dark"] .MuiButton-contained {
-  background-color: #1976d2 !important; /* Blue background */
-  color: #ffffff !important; /* White text */
-  border: 1px solid #1976d2 !important;
-}
-
-[data-theme="dark"] .table-action-button.MuiButton-contained:hover,
-[data-theme="dark"] .MuiButton-contained:hover {
-  background-color: #1565c0 !important; /* Darker blue on hover */
-  border-color: #1565c0 !important;
-}
-
-/* Status indicators */
+/* Status */
 .active-status {
-  color: #28a745; /* green for active/yes */
+    color: #10b981 !important;
 }
 
 .inactive-status {
-  color: #dc3545; /* red for inactive/no */
+    color: #f43f5e !important;
 }
 
-/* Dark theme status indicators */
-[data-theme="dark"] .active-status {
-  color: #21af26ff !important; /* Your theme's success green */
+/* Empty state text */
+.MuiTableCell-root .MuiTypography-subtitle1,
+.MuiTableCell-root .MuiTypography-body2 {
+    color: #5c5045 !important;
 }
 
-[data-theme="dark"] .inactive-status {
-  color: #f44336 !important; /* Your theme's error red */
+.MuiTableContainer-root .MuiTypography-root {
+    color: #f5f1ec;
 }
 
-/* Dark theme "No data found" text styling */
-[data-theme="dark"] .MuiTableCell-root .MuiTypography-subtitle1,
-[data-theme="dark"] .MuiTableCell-root .MuiTypography-body2 {
-  color: #000000 !important; /* Dark text for better readability on white background */
-}
-
-/* Ensure all text in table cells is dark in dark theme */
-[data-theme="dark"] .MuiTableContainer-root .MuiTypography-root {
-  color: #000000 !important;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .custom-table-container {
-    border-radius: 0;
-    box-shadow: none;
-    border: 1px solid #e0e2e6;
-  }
-  
-  [data-theme="dark"] .custom-table-container {
-    border-color: #2d3748;
-  }
-  
-  .MuiTableCell-root {
-    padding: 8px !important;
-  }
-  
-  .table-action-button {
-    padding: 4px 8px !important;
-    font-size: 0.7rem !important;
-  }
-}
-
-/* Special styling for the Users table */
+/* Users first col */
 .users-table .MuiTableRow-root .MuiTableCell-body:first-child {
-  font-weight: 500;
+    font-weight: 600 !important;
+    color: #f5f1ec !important;
 }
 
-/* Dark theme users table */
-[data-theme="dark"] .users-table .MuiTableRow-root .MuiTableCell-body:first-child {
-  font-weight: 500;
-  color: #000000 !important; /* Black text on white background */
-}
-
-/* Special styling for the Sessions tables */
+/* Sessions date col */
 .sessions-table .MuiTableCell-body:nth-child(3) {
-  white-space: nowrap;
+    white-space: nowrap;
+    color: #a09080 !important;
 }
 
-[data-theme="dark"] .sessions-table .MuiTableCell-body:nth-child(3) {
-  color: #000000 !important; /* Black text on white background */
+/* Pagination */
+.MuiTablePagination-root {
+    color: #a09080 !important;
+    border-top: 1px solid #3a3228 !important;
+    background-color: #1a1510 !important;
+}
+
+.MuiTablePagination-selectLabel,
+.MuiTablePagination-displayedRows {
+    color: #a09080 !important;
+    font-size: 0.8rem !important;
+}
+
+.MuiTablePagination-select {
+    color: #f5f1ec !important;
+}
+
+.MuiTablePagination-actions .MuiIconButton-root {
+    color: #a09080 !important;
+}
+
+.MuiTablePagination-actions .MuiIconButton-root:hover {
+    color: #e85d04 !important;
+    background-color: rgba(232, 93, 4, 0.1) !important;
+}
+
+.MuiTablePagination-actions .MuiIconButton-root.Mui-disabled {
+    color: #5c5045 !important;
+}
+
+/* Sort icons */
+.MuiTableSortLabel-root {
+    color: #fb8b24 !important;
+}
+
+.MuiTableSortLabel-root:hover {
+    color: #e85d04 !important;
+}
+
+.MuiTableSortLabel-root.Mui-active {
+    color: #e85d04 !important;
+}
+
+.MuiTableSortLabel-icon {
+    color: #e85d04 !important;
+}
+
+/* Chip / badge in tables */
+.MuiChip-root {
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    font-size: 0.72rem !important;
+}
+
+/* Table toolbar / title area */
+.MuiToolbar-root .MuiTypography-h6 {
+    color: #f5f1ec !important;
+    font-weight: 700 !important;
+}
+
+/* Checkbox */
+.MuiCheckbox-root {
+    color: #5c5045 !important;
+}
+
+.MuiCheckbox-root.Mui-checked {
+    color: #e85d04 !important;
+}
+
+/* Table footer */
+.MuiTableFooter-root {
+    background-color: #1a1510 !important;
+}
+
+@media (max-width: 768px) {
+    .custom-table-container {
+        border-radius: 8px;
+    }
+
+    .MuiTableCell-root {
+        padding: 8px 10px !important;
+    }
+
+    .table-action-button {
+        padding: 4px 8px !important;
+        font-size: 0.7rem !important;
+    }
 }
 
 @media (max-width: 600px) {
-  .custom-table-container {
-    width: 100%;
-    overflow-x: auto;
-  }
+    .custom-table-container {
+        width: 100%;
+        overflow-x: auto;
+    }
 }

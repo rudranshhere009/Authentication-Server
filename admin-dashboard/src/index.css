@@ -1,594 +1,635 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
 
-body {
-  margin: 0;
-  font-family: 'Roboto', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ── Global heading font override ──────────────────────────────────────────── */
+h1,
+h2,
+h3,
+h4,
+.MuiTypography-h1,
+.MuiTypography-h2,
+.MuiTypography-h3,
+.MuiTypography-h4 {
+    font-family: "Orbitron", sans-serif !important;
+    letter-spacing: 0.5px;
 }
 
-/* Enhanced scrollbar styles - Light Mode */
+/* ── Root Variables ─────────────────────────────────────────────────────────── */
+:root {
+    /* ── Red Accent Palette ── */
+    --red: #dc2626;
+    --red-lt: #ef4444;
+    --red-dk: #b91c1c;
+    --red-glow: rgba(220, 38, 38, 0.18);
+
+    /* ── Legacy aliases so inline C.orange refs still work via CSS vars ── */
+    --orange: #dc2626;
+    --orange-lt: #ef4444;
+    --orange-dk: #b91c1c;
+    --orange-glow: rgba(220, 38, 38, 0.18);
+
+    /* ── Status Colors ── */
+    --amber: #f59e0b;
+    --emerald: #10b981;
+    --rose: #f43f5e;
+    --cyan: #22d3ee;
+    --violet: #a855f7;
+
+    /* ── Cool-Dark Charcoal Backgrounds ── */
+    --char-950: #010409;
+    --char-900: #0d1117;
+    --char-800: #111318;
+    --char-700: #0f1117;
+    --char-600: #161b22;
+    --char-500: #1c2128;
+    --char-400: #2d333b;
+
+    /* ── Text ── */
+    --text-100: #f0f6fc;
+    --text-300: #8b949e;
+    --text-500: #484f58;
+}
+
+/* ── Base ───────────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    font-family: "Space Grotesk", "Roboto", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: linear-gradient(
+        135deg,
+        var(--char-950) 0%,
+        var(--char-900) 100%
+    );
+    min-height: 100vh;
+    color: var(--text-100);
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 10px;
+    width: 5px;
+    height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #e0e2e6;
-  border-radius: 5px;
+    background: var(--char-700);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #002060 0%, #003399 100%);
-  border-radius: 5px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--red-dk);
+    border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #003399 0%, #0066cc 100%);
+    background: var(--red);
 }
 
-/* Dark Mode Scrollbar */
-[data-theme="dark"] ::-webkit-scrollbar-track {
-  background: #2d3748;
+/* ── Theme transitions ──────────────────────────────────────────────────────── */
+* {
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease;
 }
 
-[data-theme="dark"] ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%);
-  border: 1px solid rgba(79, 195, 247, 0.1);
+/* ═══════════════════════════════════════════════════════════════════════════════
+   LOGIN PAGE
+═══════════════════════════════════════════════════════════════════════════════ */
+.loginPageWrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(
+        135deg,
+        var(--char-950) 0%,
+        var(--char-900) 100%
+    );
+    position: relative;
+    overflow: hidden;
 }
 
-[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #29b6f6 0%, #039be5 100%);
+.loginPageWrapper::before {
+    content: "";
+    position: absolute;
+    width: 700px;
+    height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        rgba(220, 38, 38, 0.12) 0%,
+        transparent 65%
+    );
+    top: -250px;
+    right: -200px;
+    pointer-events: none;
 }
 
-.Container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.loginPageWrapper::after {
+    content: "";
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        rgba(245, 158, 11, 0.07) 0%,
+        transparent 65%
+    );
+    bottom: -100px;
+    left: -100px;
+    pointer-events: none;
 }
 
-.logobox {
-  height: 50px;
-  width: 50px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  padding: 5px 5px;
-  margin-right: 10px;
-  border-radius: 8px;
-  background: rgba(25, 118, 210, 0.08);
-  transition: all 0.3s ease;
-}
-
-.logobox:hover {
-  background: rgba(25, 118, 210, 0.12);
-  transform: scale(1.02);
-}
-
-/* Dark mode logobox */
-[data-theme="dark"] .logobox {
-  background: rgba(79, 195, 247, 0.08);
-}
-
-[data-theme="dark"] .logobox:hover {
-  background: rgba(79, 195, 247, 0.12);
-}
-
-.loginImgContainer {
-  height: 150px;
-  width: 150px;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 12px;
-  background: rgba(25, 118, 210, 0.05);
-}
-
-/* Dark mode login container */
-[data-theme="dark"] .loginImgContainer {
-  background: rgba(79, 195, 247, 0.05);
-}
-
-.logoimg {
-  height: 100%;
-  width: auto;
-  object-fit: contain;
+.loginCard {
+    width: 100%;
+    max-width: 440px;
+    background: var(--char-600);
+    border: 1px solid var(--char-400);
+    border-radius: 18px;
+    padding: 44px 40px;
+    position: relative;
+    z-index: 1;
+    box-shadow:
+        0 24px 80px rgba(0, 0, 0, 0.75),
+        0 0 0 1px rgba(220, 38, 38, 0.08);
 }
 
 .loginContainer {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-/* -------------------- SIDEBAR - RESPONSIVE DESIGN -------------------- */
+.loginImgContainer {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--red) 0%, var(--red-dk) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 32px rgba(220, 38, 38, 0.45);
+    margin-bottom: 8px;
+}
+
+.logoimg {
+    height: 65%;
+    width: auto;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════════════════════════════════════════ */
 .sidebar {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  box-sizing: border-box;
-  position: fixed;
-  height: 100vh;
-  left: 0;
-  top: 0;
-  z-index: 1200;
-  overflow-x: hidden;
-  overflow-y: auto;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: fixed;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    z-index: 1200;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: var(--char-700);
+    border-right: 1px solid var(--char-400);
 }
 
-/* Desktop Sidebar States */
 @media (min-width: 900px) {
-  .sidebar.open {
-    width: 240px !important;
-  }
+    .sidebar.open {
+        width: 240px !important;
+    }
 
-  .sidebar.closed {
-    width: 72px !important;
-  }
+    .sidebar.closed {
+        width: 68px !important;
+    }
 }
 
-/* Mobile - Hide sidebar completely when closed */
 @media (max-width: 899px) {
-  .sidebar {
-    width: 280px !important;
-    transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  }
+    .sidebar {
+        width: 240px !important;
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
 
-  .sidebar.open {
-    transform: translateX(0) !important;
-  }
+    .sidebar.open {
+        transform: translateX(0) !important;
+    }
 
-  .sidebar.closed {
-    transform: translateX(-100%) !important;
-  }
+    .sidebar.closed {
+        transform: translateX(-100%) !important;
+    }
 }
 
-/* -------------------- CORE FIX: ListItem and Button Layout -------------------- */
-
-/* Base ListItem styling */
+/* Sidebar list items */
 .sidebar .MuiListItem-root {
-  padding: 0 !important;
-  margin: 0 !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
+    padding: 0 !important;
+    width: 100% !important;
 }
 
-/* Base ListItemButton styling */
 .sidebar .MuiListItemButton-root {
-  border-radius: 8px !important;
-  margin: 4px 8px !important;
-  transition: all 0.2s ease !important;
-  position: relative;
-  overflow: hidden;
-  box-sizing: border-box !important;
-  width: calc(100% - 16px) !important;
-  min-height: 48px !important;
-  display: flex !important;
-  align-items: center !important;
-}
-
-/* -------------------- DESKTOP STATES -------------------- */
-@media (min-width: 900px) {
-
-  /* Open sidebar state */
-  .sidebar.open .MuiListItemButton-root {
-    padding: 12px 16px !important;
-    justify-content: flex-start !important;
-  }
-
-  .sidebar.open .MuiListItemIcon-root {
-    min-width: 40px !important;
-    width: 24px !important;
-    height: 24px !important;
+    border-radius: 8px !important;
+    margin: 2px 8px !important;
+    width: calc(100% - 16px) !important;
+    min-height: 42px !important;
     display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
-    margin-right: 16px !important;
-    margin-left: 0 !important;
-  }
-
-  .sidebar.open .MuiListItemText-root {
-    opacity: 1 !important;
-    visibility: visible !important;
-    width: auto !important;
-    margin: 0 !important;
-    flex: 1 !important;
-    display: block !important;
-  }
-
-  /* Closed sidebar state - icons only */
-  .sidebar.closed .MuiListItemButton-root {
-    padding: 12px 0 !important;
-    justify-content: center !important;
-    width: 56px !important;
-    margin: 4px 8px !important;
-  }
-
-  .sidebar.closed .MuiListItemIcon-root {
-    min-width: 24px !important;
-    width: 24px !important;
-    height: 24px !important;
-    margin: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-
-  .sidebar.closed .MuiListItemText-root {
-    display: none !important;
-  }
+    transition: all 0.15s ease !important;
+    color: var(--text-300) !important;
 }
 
-/* -------------------- MOBILE STATES -------------------- */
-@media (max-width: 899px) {
-
-  /* Always show full sidebar on mobile when open */
-  .sidebar .MuiListItemButton-root {
-    padding: 12px 16px !important;
-    justify-content: flex-start !important;
-  }
-
-  .sidebar .MuiListItemIcon-root {
-    min-width: 40px !important;
-    width: 24px !important;
-    height: 24px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    margin-right: 16px !important;
-    margin-left: 0 !important;
-  }
-
-  .sidebar .MuiListItemText-root {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    width: auto !important;
-    margin: 0 !important;
-    flex: 1 !important;
-  }
-}
-
-/* -------------------- ICON CONSISTENCY -------------------- */
-.sidebar .MuiListItemIcon-root svg {
-  width: 20px !important;
-  height: 20px !important;
-  display: block !important;
-  flex-shrink: 0 !important;
-}
-
-/* -------------------- HOVER AND ACTIVE STATES -------------------- */
-.sidebar .MuiListItemButton-root::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  transition: left 0.5s;
-}
-
-[data-theme="dark"] .sidebar .MuiListItemButton-root::before {
-  background: linear-gradient(90deg, transparent, rgba(79, 195, 247, 0.4), transparent);
-}
-
-.sidebar .MuiListItemButton-root:hover::before {
-  left: 100%;
-}
-
-/* ========== FIXED COLOR STATES ========== */
-
-/* Default state colors - BLACK for light mode unselected items */
-.sidebar .MuiListItemButton-root .MuiListItemIcon-root,
-.sidebar .MuiListItemButton-root .MuiListItemIcon-root svg {
-  color: #111 !important;
-  fill: #111 !important;
-}
-
-.sidebar .MuiListItemButton-root .MuiListItemText-root {
-  color: #111 !important;
-}
-
-/* Dark mode default colors - WHITE for dark mode */
-[data-theme="dark"] .sidebar .MuiListItemButton-root .MuiListItemIcon-root,
-[data-theme="dark"] .sidebar .MuiListItemButton-root .MuiListItemIcon-root svg {
-  color: #fff !important;
-  fill: #fff !important;
-}
-
-[data-theme="dark"] .sidebar .MuiListItemButton-root .MuiListItemText-root {
-  color: #fff !important;
-}
-
-/* Light mode hover states - Black on hover */
 .sidebar .MuiListItemButton-root:hover {
-  background-color: rgba(25, 118, 210, 0.08) !important;
-  transform: translateX(2px);
-  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
+    background-color: var(--red-glow) !important;
+    transform: translateX(2px);
 }
 
 .sidebar .MuiListItemButton-root:hover .MuiListItemIcon-root,
-.sidebar .MuiListItemButton-root:hover .MuiListItemIcon-root svg {
-  color: #111 !important;
-  fill: #111 !important;
+.sidebar .MuiListItemButton-root:hover .MuiListItemIcon-root svg,
+.sidebar
+    .MuiListItemButton-root:hover
+    .MuiListItemText-root
+    .MuiTypography-root {
+    color: var(--red-lt) !important;
+    fill: var(--red-lt) !important;
 }
 
-.sidebar .MuiListItemButton-root:hover .MuiListItemText-root {
-  color: #111 !important;
-}
-
-/* Dark mode hover states - Blue on hover */
-[data-theme="dark"] .sidebar .MuiListItemButton-root:hover {
-  background-color: rgba(79, 195, 247, 0.08) !important;
-  box-shadow: 0 4px 12px rgba(79, 195, 247, 0.15);
-}
-
-[data-theme="dark"] .sidebar .MuiListItemButton-root:hover .MuiListItemIcon-root,
-[data-theme="dark"] .sidebar .MuiListItemButton-root:hover .MuiListItemIcon-root svg {
-  color: #4fc3f7 !important;
-  fill: #4fc3f7 !important;
-}
-
-[data-theme="dark"] .sidebar .MuiListItemButton-root:hover .MuiListItemText-root {
-  color: #4fc3f7 !important;
-}
-
-/* Active state - Light mode - WHITE text/icons on blue background */
+/* Active states */
 .sidebar .MuiListItemButton-root.Mui-selected {
-  background-color: #1976d2 !important;
-  border-left: 3px solid #1565C0 !important;
-  transform: translateX(2px);
-  border-radius: 8px !important;
+    background-color: var(--red-glow) !important;
+    border-left: 2px solid var(--red) !important;
 }
 
 .sidebar .MuiListItemButton-root.Mui-selected .MuiListItemIcon-root,
 .sidebar .MuiListItemButton-root.Mui-selected .MuiListItemIcon-root svg,
-.sidebar .MuiListItemButton-root.Mui-selected .MuiListItemText-root,
-.sidebar .MuiListItemButton-root.Mui-selected .MuiListItemText-root .MuiTypography-root {
-  color: #fff !important;
-  fill: #fff !important;
+.sidebar
+    .MuiListItemButton-root.Mui-selected
+    .MuiListItemText-root
+    .MuiTypography-root {
+    color: var(--red-lt) !important;
+    fill: var(--red-lt) !important;
 }
 
-/* Active state - Dark mode - White text/icons */
-[data-theme="dark"] .sidebar .MuiListItemButton-root.Mui-selected {
-  background-color: rgba(79, 195, 247, 0.12) !important;
-  border-left: 3px solid #4fc3f7 !important;
+.sidebar
+    .MuiListItemButton-root.Mui-selected
+    .MuiListItemText-root
+    .MuiTypography-root {
+    font-weight: 600 !important;
 }
 
-[data-theme="dark"] .sidebar .MuiListItemButton-root.Mui-selected .MuiListItemIcon-root,
-[data-theme="dark"] .sidebar .MuiListItemButton-root.Mui-selected .MuiListItemIcon-root svg {
-  color: #fff !important;
-  fill: #fff !important;
+/* Default icon/text */
+.sidebar .MuiListItemIcon-root,
+.sidebar .MuiListItemIcon-root svg {
+    color: var(--text-500) !important;
+    fill: var(--text-500) !important;
 }
 
-[data-theme="dark"] .sidebar .MuiListItemButton-root.Mui-selected .MuiListItemText-root {
-  color: #fff !important;
+.sidebar .MuiListItemText-root .MuiTypography-root {
+    color: var(--text-300) !important;
+    font-family: "Space Grotesk", sans-serif !important;
 }
 
-/* Active hover state - Light mode - Keep white on hover */
-.sidebar .MuiListItemButton-root.Mui-selected:hover {
-  background-color: #1565C0 !important;
+.sidebar .MuiListItemIcon-root svg {
+    width: 18px !important;
+    height: 18px !important;
 }
 
-.sidebar .MuiListItemButton-root.Mui-selected:hover .MuiListItemIcon-root,
-.sidebar .MuiListItemButton-root.Mui-selected:hover .MuiListItemIcon-root svg {
-  color: #fff !important;
-  fill: #fff !important;
-}
-
-.sidebar .MuiListItemButton-root.Mui-selected:hover .MuiListItemText-root {
-  color: #fff !important;
-}
-
-/* Active hover state - Dark mode - Blue on hover */
-[data-theme="dark"] .sidebar .MuiListItemButton-root.Mui-selected:hover {
-  background-color: rgba(79, 195, 247, 0.16) !important;
-}
-
-[data-theme="dark"] .sidebar .MuiListItemButton-root.Mui-selected:hover .MuiListItemIcon-root,
-[data-theme="dark"] .sidebar .MuiListItemButton-root.Mui-selected:hover .MuiListItemIcon-root svg {
-  color: #4fc3f7 !important;
-  fill: #4fc3f7 !important;
-}
-
-[data-theme="dark"] .sidebar .MuiListItemButton-root.Mui-selected:hover .MuiListItemText-root {
-  color: #4fc3f7 !important;
-}
-
-/* Remove border on closed desktop sidebar but KEEP the blue background */
+/* Desktop layout */
 @media (min-width: 900px) {
-  .sidebar.closed .MuiListItemButton-root.Mui-selected {
-    border-left: none !important;
-    background-color: #1976d2 !important;
-    border-radius: 8px !important;
-  }
+    .sidebar.open .MuiListItemButton-root {
+        padding: 10px 12px !important;
+        justify-content: flex-start !important;
+    }
 
-  [data-theme="dark"] .sidebar.closed .MuiListItemButton-root.Mui-selected {
-    background-color: rgba(79, 195, 247, 0.15) !important;
-    border-radius: 8px !important;
-  }
+    .sidebar.open .MuiListItemIcon-root {
+        min-width: 34px !important;
+        margin-right: 10px !important;
+    }
+
+    .sidebar.open .MuiListItemText-root {
+        opacity: 1 !important;
+        display: block !important;
+    }
+
+    .sidebar.closed .MuiListItemButton-root {
+        padding: 10px 0 !important;
+        justify-content: center !important;
+        width: 52px !important;
+    }
+
+    .sidebar.closed .MuiListItemIcon-root {
+        min-width: 24px !important;
+        margin: 0 !important;
+    }
+
+    .sidebar.closed .MuiListItemText-root {
+        display: none !important;
+    }
+
+    .sidebar.closed .MuiListItemButton-root.Mui-selected {
+        border-left: none !important;
+    }
 }
 
-/* Toggle button */
-.sidebar .MuiIconButton-root {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+/* Sidebar caption */
+.sidebar .MuiTypography-caption {
+    color: var(--text-500) !important;
+    font-family: "Space Grotesk", sans-serif !important;
 }
 
-.sidebar .MuiIconButton-root:hover {
-  transform: scale(1.1) !important;
-  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.2) !important;
+/* ═══════════════════════════════════════════════════════════════════════════════
+   GLOBAL TYPOGRAPHY OVERRIDES
+═══════════════════════════════════════════════════════════════════════════════ */
+
+.MuiTypography-root {
+    font-family: "Space Grotesk", sans-serif !important;
 }
 
-[data-theme="dark"] .sidebar .MuiIconButton-root:hover {
-  box-shadow: 0 4px 12px rgba(79, 195, 247, 0.2) !important;
+.MuiTypography-h1,
+.MuiTypography-h2,
+.MuiTypography-h3,
+.MuiTypography-h4 {
+    font-family: "Orbitron", sans-serif !important;
 }
 
-/* -------------------- ANIMATIONS -------------------- */
+.MuiButton-root,
+.MuiChip-label,
+.MuiTableCell-root,
+.MuiMenuItem-root,
+.MuiInputBase-input,
+.MuiInputLabel-root,
+.MuiTab-root {
+    font-family: "Space Grotesk", sans-serif !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════════════════════════════════════════════ */
 @keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
+    from {
+        opacity: 0;
+        transform: translateX(-14px);
+    }
 
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .sidebar .MuiListItem-root {
-  animation: slideIn 0.3s ease-out;
+    animation: slideIn 0.2s ease-out;
 }
 
-/* -------------------- ACCESSIBILITY & MODES -------------------- */
-@media (prefers-contrast: high) {
-  .sidebar .MuiListItemButton-root:hover {
-    background-color: rgba(25, 118, 210, 0.2) !important;
-  }
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
 
-  [data-theme="dark"] .sidebar .MuiListItemButton-root:hover {
-    background-color: rgba(79, 195, 247, 0.2) !important;
-  }
-
-  .sidebar .MuiListItemButton-root.Mui-selected {
-    background-color: rgba(25, 118, 210, 0.25) !important;
-    border-left-width: 4px !important;
-  }
-
-  [data-theme="dark"] .sidebar .MuiListItemButton-root.Mui-selected {
-    background-color: rgba(79, 195, 247, 0.25) !important;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-
-  .sidebar,
-  .sidebar .MuiListItemButton-root,
-  .sidebar .MuiIconButton-root,
-  .main-content {
-    transition: none !important;
-  }
-
-  .sidebar .MuiListItemButton-root:hover::before {
-    display: none;
-  }
-
-  .sidebar .MuiIconButton-root:hover {
-    transform: none !important;
-  }
-}
-
-/* Dark mode specific scrollbar */
-@media (prefers-color-scheme: dark) {
-  ::-webkit-scrollbar-track {
-    background: #2a2a2a;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #4fc3f7 0%, #29b6f6 100%);
-  }
-
-  .logobox:hover {
-    background: rgba(79, 195, 247, 0.12);
-  }
-}
-
-/* -------------------- FOCUS & LOADING -------------------- */
-.sidebar .MuiListItemButton-root:focus {
-  outline: 2px solid #1976d2 !important;
-  outline-offset: 2px !important;
-}
-
-[data-theme="dark"] .sidebar .MuiListItemButton-root:focus {
-  outline: 2px solid #4fc3f7 !important;
-}
-
-button:focus,
-.MuiIconButton-root:focus {
-  outline: 2px solid #1976d2;
-  outline-offset: 2px;
-}
-
-[data-theme="dark"] button:focus,
-[data-theme="dark"] .MuiIconButton-root:focus {
-  outline: 2px solid #4fc3f7;
+    100% {
+        background-position: -200% 0;
+    }
 }
 
 .loading-shimmer {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s infinite;
+    background: linear-gradient(
+        90deg,
+        var(--char-600) 25%,
+        var(--char-500) 50%,
+        var(--char-600) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
 }
 
-[data-theme="dark"] .loading-shimmer {
-  background: linear-gradient(90deg, #2d3748 25%, #1a2332 50%, #2d3748 75%);
+/* ── Red glow pulse (used on live indicator) ──────────────────────────────── */
+@keyframes redPulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 6px rgba(220, 38, 38, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+    }
 }
 
-@keyframes loading {
-  0% {
-    background-position: 200% 0;
-  }
-
-  100% {
-    background-position: -200% 0;
-  }
+/* Keep orangePulse alias for existing usage */
+@keyframes orangePulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 6px rgba(220, 38, 38, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+    }
 }
 
-/* Prevent horizontal scrollbar */
-html,
-body {
-  overflow-x: hidden;
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
+.fade-up {
+    animation: fadeUp 0.3s ease-out;
 }
 
-/* -------------------- MOBILE OVERLAY & BACKDROP -------------------- */
+/* ═══════════════════════════════════════════════════════════════════════════════
+   FOCUS / ACCESSIBILITY
+═══════════════════════════════════════════════════════════════════════════════ */
+.sidebar .MuiListItemButton-root:focus,
+button:focus,
+.MuiIconButton-root:focus {
+    outline: 2px solid var(--red) !important;
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sidebar,
+    .sidebar .MuiListItemButton-root {
+        transition: none !important;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   LOGOBOX (topbar / sidebar brand icon)
+═══════════════════════════════════════════════════════════════════════════════ */
+.logobox {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--red) 0%, var(--red-dk) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4);
+    transition:
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.logobox:hover {
+    box-shadow: 0 6px 24px rgba(220, 38, 38, 0.6);
+    transform: scale(1.05);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   MOBILE BACKDROP
+═══════════════════════════════════════════════════════════════════════════════ */
 @media (max-width: 899px) {
+    .sidebar-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(1, 4, 9, 0.85);
+        z-index: 1199;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
 
-  /* Add backdrop when sidebar is open on mobile */
-  .sidebar-backdrop {
+    .sidebar-backdrop.open {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   TABLE OVERRIDES
+═══════════════════════════════════════════════════════════════════════════════ */
+.custom-table-container .MuiTableCell-head {
+    background-color: var(--char-700) !important;
+    color: var(--red-lt) !important;
+    font-family: "Space Grotesk", sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 0.72rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    border-bottom: 1px solid var(--char-400) !important;
+}
+
+.custom-table-container .MuiTableCell-body {
+    color: var(--text-100) !important;
+    font-family: "Space Grotesk", sans-serif !important;
+    border-bottom: 1px solid var(--char-500) !important;
+    font-size: 0.84rem !important;
+}
+
+.custom-table-container .MuiTableRow-root:hover {
+    background-color: rgba(220, 38, 38, 0.05) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   MISC OVERRIDES
+═══════════════════════════════════════════════════════════════════════════════ */
+
+/* MUI Select / Menu dropdowns */
+.MuiMenu-paper,
+.MuiPaper-root.MuiMenu-paper {
+    background-color: var(--char-700) !important;
+    border: 1px solid var(--char-400) !important;
+    font-family: "Space Grotesk", sans-serif !important;
+}
+
+.MuiMenuItem-root {
+    color: var(--text-100) !important;
+    font-family: "Space Grotesk", sans-serif !important;
+}
+
+.MuiMenuItem-root:hover {
+    background-color: var(--red-glow) !important;
+}
+
+.MuiMenuItem-root.Mui-selected {
+    background-color: rgba(220, 38, 38, 0.12) !important;
+}
+
+/* Alert overrides */
+.MuiAlert-standardError,
+.MuiAlert-filledError {
+    background-color: rgba(244, 63, 94, 0.1) !important;
+    border: 1px solid rgba(244, 63, 94, 0.25) !important;
+    color: #fda4af !important;
+}
+
+/* Chip overrides */
+.MuiChip-root {
+    border-radius: 6px !important;
+    font-family: "Space Grotesk", sans-serif !important;
+}
+
+/* Badge overrides */
+.MuiBadge-badge {
+    background-color: var(--red) !important;
+    color: #fff !important;
+    font-family: "Space Grotesk", sans-serif !important;
+}
+
+/* Tooltip */
+.MuiTooltip-tooltip {
+    font-family: "Space Grotesk", sans-serif !important;
+}
+
+/* TablePagination */
+.MuiTablePagination-root .MuiTablePagination-selectLabel,
+.MuiTablePagination-root .MuiTablePagination-displayedRows {
+    font-family: "Space Grotesk", sans-serif !important;
+}
+
+/* ── Red scanline texture overlay (subtle) ──────────────────────────────────── */
+body::after {
+    content: "";
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1199;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-  }
-
-  .sidebar-backdrop.open {
-    opacity: 1;
-    visibility: visible;
-  }
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.015) 2px,
+        rgba(0, 0, 0, 0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
 }
 
-/* Sidebar footer text color - Light mode */
-.sidebar .MuiTypography-caption {
-  color: #1976d2 !important;
-  opacity: 0.85;
+/* ── Anomaly badge pulse ─────────────────────────────────────────────────────── */
+@keyframes anomalyPulse {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.6);
+    }
+    50% {
+        box-shadow: 0 0 0 6px rgba(220, 38, 38, 0);
+    }
 }
 
-/* Sidebar footer text color - Dark mode */
-[data-theme="dark"] .sidebar .MuiTypography-caption {
-  color: #4fc3f7 !important;
-  opacity: 0.85;
+.anomaly-badge {
+    animation: anomalyPulse 2s infinite;
 }
 
-/* Dark mode body background */
-[data-theme="dark"] body {
-  background-color: #0a0e1a;
-  color: #ffffff;
-}
-
-/* Smooth theme transition */
-* {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+/* ── Card hover glow ─────────────────────────────────────────────────────────── */
+.stat-card-hover:hover {
+    box-shadow: 0 8px 32px rgba(220, 38, 38, 0.2) !important;
 }

@@ -1,97 +1,109 @@
+import { Card, CardContent, Typography } from "@mui/material";
 
+const PALETTE = {
+  primary: { main: "#DC2626", dark: "#B91C1C", glow: "rgba(220,38,38,0.15)" },
+  secondary: {
+    main: "#EF4444",
+    dark: "#DC2626",
+    glow: "rgba(251,139,36,0.15)",
+  },
+  error: { main: "#F43F5E", dark: "#BE123C", glow: "rgba(244,63,94,0.15)" },
+  warning: { main: "#F59E0B", dark: "#B45309", glow: "rgba(245,158,11,0.15)" },
+  info: { main: "#22D3EE", dark: "#0E7490", glow: "rgba(34,211,238,0.15)" },
+  success: { main: "#10B981", dark: "#047857", glow: "rgba(16,185,129,0.15)" },
+};
 
-import { Card, CardContent, Typography, useTheme, Box, alpha } from "@mui/material";
+const C = {
+  char600: "#161B22",
+  char500: "#1C2128",
+  char400: "#2D333B",
+  text100: "#F0F6FC",
+  text500: "#484F58",
+};
 
-const QuickViewCard = ({ Title, Value, color = "primary", compact, filterKey, darkMode }) => {
-  const theme = useTheme();
-  
-  const getCardColors = () => {
-    const baseColor = theme.palette[color]?.main || theme.palette.primary.main;
-    
-    if (darkMode) {
-      return {
-        background: '#1a2332',
-        shadowColor: alpha(baseColor, 0.2),
-        hoverShadowColor: alpha(baseColor, 0.3),
-        borderColor: baseColor,
-        titleColor: '#b0bec5',
-        valueColor: '#ffffff'
-      };
-    } else {
-      return {
-        background: theme.palette.background.paper,
-        shadowColor: alpha(baseColor, 0.08),
-        hoverShadowColor: alpha(baseColor, 0.15),
-        borderColor: baseColor,
-        titleColor: alpha(theme.palette.text.secondary, 1),
-        valueColor: theme.palette.text.primary
-      };
-    }
-  };
+const QuickViewCard = ({
+  Title,
+  Value,
+  color = "primary",
+  compact,
+  filterKey,
+}) => {
+  const a = PALETTE[color] || PALETTE.primary;
 
-  const colors = getCardColors();
-  
   return (
     <Card
       sx={{
         cursor: filterKey ? "pointer" : "default",
-        bgcolor: colors.background,
-        position: 'relative',
-        borderRadius: 2,
-        overflow: 'hidden',
-        boxShadow: `0 8px 24px ${colors.shadowColor}`,
-        transition: 'all 0.3s ease',
-        border: darkMode ? `1px solid #2d3748` : 'none',
-        '&:hover': {
-          boxShadow: filterKey ? `0 12px 28px ${colors.hoverShadowColor}` : 
-            `0 8px 24px ${colors.shadowColor}`,
-          transform: filterKey ? 'translateY(-4px)' : 'translateY(-2px)',
-        },
-        '&::before': {
+        bgcolor: C.char600,
+        border: `1px solid ${C.char400}`,
+        borderRadius: "14px",
+        position: "relative",
+        overflow: "hidden",
+        boxShadow: "0 4px 24px rgba(0,0,0,0.5)",
+        transition: "all 0.2s ease",
+        "&:hover": filterKey
+          ? {
+              transform: "translateY(-3px)",
+              borderColor: a.main,
+              boxShadow: `0 8px 36px ${a.glow}, 0 0 0 1px ${a.main}30`,
+            }
+          : {},
+        // Left accent bar
+        "&::before": {
           content: '""',
-          position: 'absolute',
+          position: "absolute",
           left: 0,
           top: 0,
           bottom: 0,
-          width: '4px',
-          background: darkMode 
-            ? `linear-gradient(to bottom, ${colors.borderColor}, ${alpha(colors.borderColor, 0.6)})`
-            : `linear-gradient(to bottom, ${colors.borderColor}, ${alpha(colors.borderColor, 0.6)})`,
-        }
+          width: "3px",
+          background: `linear-gradient(to bottom, ${a.main}, ${a.dark})`,
+        },
+        // Subtle top glow
+        "&::after": {
+          content: '""',
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: "1px",
+          background: `linear-gradient(90deg, ${a.main}60, transparent 60%)`,
+        },
       }}
     >
-      <CardContent sx={{ 
-        p: compact ? 2 : 2.5,
-        pl: compact ? 2.5 : 3,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 0.5
-      }}>
-        <Typography 
-          variant="subtitle2" 
+      <CardContent
+        sx={{
+          pl: compact ? 2.5 : 3,
+          pr: 2,
+          py: compact ? 1.75 : 2.25,
+          display: "flex",
+          flexDirection: "column",
+          gap: 0.6,
+          "&:last-child": { pb: compact ? 1.75 : 2.25 },
+        }}
+      >
+        {/* Label */}
+        <Typography
           sx={{
-            color: colors.titleColor,
-            fontSize: '0.85rem',
-            fontWeight: 800,
-            letterSpacing: '0.3px',
-            textTransform: 'uppercase'
+            color: C.text500,
+            fontSize: "0.68rem",
+            fontWeight: 600,
+            letterSpacing: "0.09em",
+            textTransform: "uppercase",
           }}
         >
           {Title}
         </Typography>
-        
-        <Typography 
-          variant="h6" 
+
+        {/* Value */}
+        <Typography
           sx={{
-            color: colors.valueColor,
-            fontWeight: 700,
-            fontSize: compact ? '1.3rem' : '1.5rem',
-            mt: 0.5,
-            background: `linear-gradient(135deg, ${colors.borderColor}, 
-              ${theme.palette[color]?.dark || theme.palette.primary.dark})`,
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text'
+            fontWeight: 800,
+            fontSize: compact ? "1.7rem" : "2.1rem",
+            lineHeight: 1,
+            background: `linear-gradient(135deg, ${a.main} 0%, ${a.dark} 100%)`,
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
           }}
         >
           {Value}

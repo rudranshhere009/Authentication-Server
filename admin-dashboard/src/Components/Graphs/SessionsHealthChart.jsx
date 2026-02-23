@@ -1,166 +1,128 @@
+import { Box, Typography } from "@mui/material";
+import { ResponsiveBar } from "@nivo/bar";
+import { memo, useMemo } from "react";
 
+const EMERALD = "#10B981";
+const AMBER = "#F59E0B";
+const ROSE = "#F43F5E";
+const CHAR_400 = "#2D333B";
+const CHAR_700 = "#0F1117";
+const TEXT_300 = "#8B949E";
+const TEXT_100 = "#F0F6FC";
 
-import { Box, Typography, useTheme } from "@mui/material";
-import { ResponsiveBar } from '@nivo/bar';
-import { memo, useMemo } from 'react';
+const nivoTheme = {
+  background: "transparent",
+  text: { fontSize: 11, fill: TEXT_300 },
+  axis: {
+    domain: { line: { stroke: CHAR_400, strokeWidth: 1 } },
+    legend: { text: { fontSize: 12, fill: TEXT_100, fontWeight: 600 } },
+    ticks: {
+      line: { stroke: CHAR_400, strokeWidth: 1 },
+      text: { fontSize: 10, fill: TEXT_300 },
+    },
+  },
+  grid: { line: { stroke: CHAR_400, strokeDasharray: "4 4" } },
+  tooltip: {
+    container: {
+      background: CHAR_700,
+      color: TEXT_100,
+      fontSize: 12,
+      borderRadius: 8,
+      border: `1px solid ${CHAR_400}`,
+    },
+  },
+};
 
 const SessionsHealthChartBase = ({ sessions }) => {
-  const theme = useTheme();
-  
-  // Memoize session status calculations
-  const sessionCounts = useMemo(() => {
-    if (!Array.isArray(sessions) || sessions.length === 0) {
+  const counts = useMemo(() => {
+    if (!Array.isArray(sessions) || !sessions.length)
       return { active: 0, inactive: 0, expired: 0 };
-    }
     const now = new Date();
-    const fifteenMinutesAgo = new Date(now - 15 * 60 * 1000);
-    return sessions.reduce((acc, session) => {
-      if (!session.is_active) {
-        acc.inactive++;
-      } else {
-        const sessionDate = new Date(session.created_at);
-        acc[sessionDate > fifteenMinutesAgo ? 'active' : 'expired']++;
-      }
-      return acc;
-    }, { active: 0, inactive: 0, expired: 0 });
+    const fifteenAgo = new Date(now - 15 * 60 * 1000);
+    return sessions.reduce(
+      (a, s) => {
+        if (!s.is_active) a.inactive++;
+        else {
+          const d = new Date(s.created_at);
+          a[d > fifteenAgo ? "active" : "expired"]++;
+        }
+        return a;
+      },
+      { active: 0, inactive: 0, expired: 0 },
+    );
   }, [sessions]);
 
-  if (!Array.isArray(sessions) || sessions.length === 0) {
+  if (!Array.isArray(sessions) || !sessions.length)
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" height={400}>
-        <Typography variant="body1" color="text.secondary">
-          No session data available
-        </Typography>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100%"
+      >
+        <Typography sx={{ color: TEXT_300 }}>No session data</Typography>
       </Box>
     );
-  }
 
-  const activeCount = sessionCounts.active;
-  const expiredCount = sessionCounts.expired;
-  const inactiveCount = sessionCounts.inactive;
-  
-  // Calculate max value to determine appropriate tick interval
-  const maxValue = Math.max(activeCount, inactiveCount, expiredCount);
-  const tickInterval = Math.max(5, Math.ceil(maxValue / 10) * 5); // Minimum gap of 5
+  const { active, inactive, expired } = counts;
+  const maxVal = Math.max(active, inactive, expired, 1);
+  const ticks = Array.from(
+    { length: Math.floor(maxVal / 5) + 2 },
+    (_, i) => i * 5,
+  );
 
   const data = [
-    {
-      status: 'Active',
-      count: activeCount,
-      color: theme.palette.success?.main || '#4caf50'
-    },
-    {
-      status: 'Inactive',
-      count: inactiveCount,
-      color: theme.palette.warning?.main || '#ff9800'
-    },
-    {
-      status: 'Expired',
-      count: expiredCount,
-      color: theme.palette.error.main
-    }
+    { status: "Active", count: active, color: EMERALD },
+    { status: "Inactive", count: inactive, color: AMBER },
+    { status: "Expired", count: expired, color: ROSE },
   ];
 
   return (
     <ResponsiveBar
       data={data}
-      keys={['count']}
+      keys={["count"]}
       indexBy="status"
-      margin={{ top: 10, right: 20, bottom: 40, left: 40 }}
-      padding={0.3}
-      valueScale={{ type: 'linear' }}
-      indexScale={{ type: 'band', round: true }}
+      margin={{ top: 10, right: 10, bottom: 42, left: 40 }}
+      padding={0.35}
+      valueScale={{ type: "linear" }}
+      indexScale={{ type: "band", round: true }}
       colors={({ data }) => data.color}
-      borderColor={{
-        from: 'color',
-        modifiers: [['darker', 1.6]]
-      }}
+      borderRadius={5}
+      borderColor={{ from: "color", modifiers: [["darker", 1.4]] }}
       axisTop={null}
       axisRight={null}
       axisBottom={{
-        tickSize: 5,
-        tickPadding: 5,
-        tickRotation: 0,
-        legend: 'Session Status',
-        legendPosition: 'middle',
-        legendOffset: 32
+        tickSize: 4,
+        tickPadding: 6,
+        legend: "Status",
+        legendPosition: "middle",
+        legendOffset: 32,
+        tickTextColor: TEXT_300,
       }}
       axisLeft={{
-        tickSize: 5,
-        tickPadding: 5,
-        tickRotation: 0,
-        legend: 'Count',
-        legendPosition: 'middle',
+        tickSize: 4,
+        tickPadding: 6,
+        legend: "Count",
+        legendPosition: "middle",
         legendOffset: -30,
-        tickValues: maxValue <= 20 ? 
-          // For small values, show every 5
-          Array.from({ length: Math.floor(maxValue / 5) + 2 }, (_, i) => i * 5) :
-          // For larger values, use calculated interval
-          Array.from({ length: Math.floor(maxValue / tickInterval) + 2 }, (_, i) => i * tickInterval)
+        tickValues: ticks,
       }}
       labelSkipWidth={12}
       labelSkipHeight={12}
-      labelTextColor={theme.palette.text.primary}
-      theme={{
-        background: 'transparent',
-        text: {
-          fontSize: 11,
-          fill: theme.palette.text.secondary,
-        },
-        axis: {
-          domain: {
-            line: {
-              stroke: theme.palette.divider,
-              strokeWidth: 1
-            }
-          },
-          legend: {
-            text: {
-              fontSize: 12,
-              fill: theme.palette.text.primary,
-              fontWeight: 600
-            }
-          },
-          ticks: {
-            line: {
-              stroke: theme.palette.divider,
-              strokeWidth: 1
-            },
-            text: {
-              fontSize: 10,
-              fill: theme.palette.text.secondary
-            }
-          }
-        },
-        tooltip: {
-          container: {
-            background: theme.palette.background.paper,
-            color: theme.palette.text.primary,
-            fontSize: 12,
-            borderRadius: theme.shape.borderRadius || 4,
-            boxShadow: theme.shadows[4],
-            border: `1px solid ${theme.palette.divider}`,
-            padding: '9px 12px'
-          }
-        }
-      }}
-      tooltip={({ id, value, color, data }) => (
+      labelTextColor="#ffffff"
+      theme={nivoTheme}
+      tooltip={({ data: d, value, color }) => (
         <div
           style={{
-            background: theme.palette.background.paper,
-            padding: '9px 12px',
-            border: `1px solid ${theme.palette.divider}`,
-            borderRadius: theme.shape.borderRadius || 4,
-            boxShadow: theme.shadows[4],
-            color: theme.palette.text.primary
+            background: CHAR_700,
+            padding: "8px 12px",
+            border: `1px solid ${CHAR_400}`,
+            borderRadius: 8,
+            color: TEXT_100,
           }}
         >
-          <div style={{ fontWeight: 600, marginBottom: 4 }}>
-            {data.status}
-          </div>
-          <div style={{ color: color }}>
-            Count: {value}
-          </div>
+          <div style={{ fontWeight: 600, marginBottom: 4 }}>{d.status}</div>
+          <div style={{ color }}>Count: {value}</div>
         </div>
       )}
     />
@@ -168,5 +130,5 @@ const SessionsHealthChartBase = ({ sessions }) => {
 };
 
 const SessionsHealthChart = memo(SessionsHealthChartBase);
-SessionsHealthChart.displayName = 'SessionsHealthChart';
+SessionsHealthChart.displayName = "SessionsHealthChart";
 export default SessionsHealthChart;

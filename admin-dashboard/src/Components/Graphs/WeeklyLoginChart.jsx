@@ -1,158 +1,139 @@
+import { Box, Typography } from "@mui/material";
+import { ResponsiveLine } from "@nivo/line";
 
+const ORANGE = "#DC2626";
+const ORANGE_LT = "#EF4444";
+const CHAR_400 = "#2D333B";
+const CHAR_700 = "#0F1117";
+const TEXT_300 = "#8B949E";
+const TEXT_100 = "#F0F6FC";
 
-
-
-import { Box, Typography, useTheme } from "@mui/material";
-import { ResponsiveLine } from '@nivo/line';
+const nivoTheme = {
+  background: "transparent",
+  text: { fontSize: 11, fill: TEXT_300 },
+  axis: {
+    domain: { line: { stroke: CHAR_400, strokeWidth: 1 } },
+    legend: { text: { fontSize: 12, fill: TEXT_100, fontWeight: 600 } },
+    ticks: {
+      line: { stroke: CHAR_400, strokeWidth: 1 },
+      text: { fontSize: 10, fill: TEXT_300 },
+    },
+  },
+  grid: { line: { stroke: CHAR_400, strokeWidth: 1, strokeDasharray: "4 4" } },
+  crosshair: {
+    line: {
+      stroke: ORANGE,
+      strokeWidth: 1,
+      strokeOpacity: 0.75,
+      strokeDasharray: "6 6",
+    },
+  },
+  tooltip: {
+    container: {
+      background: CHAR_700,
+      color: TEXT_100,
+      fontSize: 12,
+      borderRadius: 8,
+      border: `1px solid ${CHAR_400}`,
+    },
+  },
+};
 
 const WeeklyLoginChart = ({ data }) => {
-  const theme = useTheme();
+  if (!data || data.length === 0) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100%"
+      >
+        <Typography sx={{ color: TEXT_300 }}>No data available</Typography>
+      </Box>
+    );
+  }
 
-  // Transform data for Nivo format with numeric x values for linear scale
+  const dayLabels = data.map((d) => d.day);
   const nivoData = [
     {
-      id: "logins",
-      color: theme.palette.primary.main,
-      data: data.map((item, index) => ({
-        x: index + 1, // Use numeric values (1-7 for days)
+      id: "Logins",
+      color: ORANGE,
+      data: data.map((item, i) => ({
+        x: i + 1,
         y: item.logins,
-        day: item.day // Keep day name for tooltip
-      }))
-    }
+        day: item.day,
+      })),
+    },
   ];
-
-  // Day labels for the x-axis
-  const dayLabels = data.map(item => item.day);
 
   return (
     <ResponsiveLine
       data={nivoData}
-      margin={{ top: 20, right: 30, bottom: 60, left: 60 }}
-      xScale={{
-        type: 'linear',
-        min: 1,
-        max: 7
-      }}
-      yScale={{
-        type: 'linear',
-        min: 'auto',
-        max: 'auto',
-        stacked: false,
-        reverse: false
-      }}
+      margin={{ top: 20, right: 30, bottom: 55, left: 55 }}
+      xScale={{ type: "linear", min: 1, max: 7 }}
+      yScale={{ type: "linear", min: "auto", max: "auto" }}
       curve="monotoneX"
       axisTop={null}
       axisRight={null}
       axisBottom={{
-        orient: 'bottom',
-        tickSize: 5,
-        tickPadding: 10,
-        tickRotation: 0,
-        legend: 'Days',
-        legendOffset: 46,
-        legendPosition: 'middle',
-        tickValues: [1, 2, 3, 4, 5, 6, 7], // Show all 7 days
-        format: (value) => dayLabels[value - 1] || '' // Convert numeric to day names
+        tickSize: 4,
+        tickPadding: 8,
+        legend: "Day",
+        legendOffset: 42,
+        legendPosition: "middle",
+        tickValues: [1, 2, 3, 4, 5, 6, 7],
+        format: (v) => dayLabels[v - 1] || "",
       }}
       axisLeft={{
-        orient: 'left',
-        tickSize: 5,
-        tickPadding: 10,
-        tickRotation: 0,
-        legend: 'User Logins',
-        legendOffset: -50,
-        legendPosition: 'middle'
+        tickSize: 4,
+        tickPadding: 8,
+        legend: "Logins",
+        legendOffset: -44,
+        legendPosition: "middle",
       }}
-      pointSize={8}
-      pointColor={theme.palette.background.paper}
-      pointBorderWidth={3}
-      pointBorderColor={theme.palette.primary.main}
-      pointLabelYOffset={-12}
-      useMesh={true}
-      colors={[theme.palette.primary.main]}
-      lineWidth={3}
+      enableArea={true}
+      areaOpacity={0.12}
+      areaBaselineValue={0}
       enablePoints={true}
-      enablePointLabel={false}
-      enableArea={false}
-      enableGridX={true}
+      pointSize={7}
+      pointColor={CHAR_700}
+      pointBorderWidth={2}
+      pointBorderColor={ORANGE}
+      lineWidth={2.5}
+      enableGridX={false}
       enableGridY={true}
-      gridXValues={[1, 2, 3, 4, 5, 6, 7]} // Show grid for each day
-      gridYValues={5}
-      theme={{
-        background: 'transparent',
-        text: {
-          fontSize: 12,
-          fill: theme.palette.text.secondary,
-          outlineWidth: 0,
-          outlineColor: 'transparent'
+      colors={[ORANGE]}
+      useMesh={true}
+      theme={nivoTheme}
+      defs={[
+        {
+          id: "orangeGradient",
+          type: "linearGradient",
+          colors: [
+            { offset: 0, color: ORANGE, opacity: 0.4 },
+            { offset: 100, color: ORANGE, opacity: 0 },
+          ],
         },
-        axis: {
-          domain: {
-            line: {
-              stroke: theme.palette.divider,
-              strokeWidth: 1
-            }
-          },
-          legend: {
-            text: {
-              fontSize: 14,
-              fill: theme.palette.text.primary,
-              fontWeight: 600
-            }
-          },
-          ticks: {
-            line: {
-              stroke: theme.palette.divider,
-              strokeWidth: 1
-            },
-            text: {
-              fontSize: 11,
-              fill: theme.palette.text.secondary
-            }
-          }
-        },
-        grid: {
-          line: {
-            stroke: theme.palette.divider,
-            strokeWidth: 1,
-            strokeDasharray: '4 4'
-          }
-        },
-        crosshair: {
-          line: {
-            stroke: theme.palette.primary.main,
-            strokeWidth: 1,
-            strokeOpacity: 0.75,
-            strokeDasharray: '6 6'
-          }
-        },
-        tooltip: {
-          container: {
-            background: theme.palette.background.paper,
-            color: theme.palette.text.primary,
-            fontSize: 12,
-            borderRadius: theme.shape.borderRadius,
-            boxShadow: theme.shadows[4],
-            border: `1px solid ${theme.palette.divider}`
-          }
-        }
-      }}
+      ]}
+      fill={[{ match: "*", id: "orangeGradient" }]}
       tooltip={({ point }) => (
         <Box
           sx={{
-            background: theme.palette.background.paper,
-            padding: '9px 12px',
-            border: `1px solid ${theme.palette.divider}`,
-            borderRadius: 1,
-            boxShadow: theme.shadows[4]
+            background: CHAR_700,
+            p: "8px 12px",
+            border: `1px solid ${CHAR_400}`,
+            borderRadius: "8px",
           }}
         >
-          <Typography variant="body2" sx={{ fontWeight: 600, color: theme.palette.text.primary }}>
+          <Typography
+            variant="body2"
+            sx={{ fontWeight: 600, color: TEXT_100, fontSize: "0.8rem" }}
+          >
             {point.data.day}
           </Typography>
           <Typography
             variant="body2"
-            sx={{ color: theme.palette.primary.main }}
+            sx={{ color: ORANGE_LT, fontSize: "0.8rem" }}
           >
             Logins: {point.data.y}
           </Typography>
