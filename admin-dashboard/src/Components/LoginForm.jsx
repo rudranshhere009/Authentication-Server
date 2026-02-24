@@ -69,7 +69,7 @@ function LoginForm({ handleLogin, error, isLoading }) {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
+        height: "100vh",
         position: "relative",
         overflow: "hidden",
         display: "flex",
@@ -237,27 +237,27 @@ function LoginForm({ handleLogin, error, isLoading }) {
 
       {/* Centered container */}
       <Box sx={{ width: "100%", maxWidth: 1200, mt: { xs: 6, md: 8 }, px: 2, position: "relative", zIndex: 4 }}>
-        {/* Headline band */}
-        <Box sx={{ display: { xs: "none", lg: "block" }, mb: 4 }}>
-          <Typography sx={{ color: C.text500, fontSize: "0.78rem", letterSpacing: "0.12em", textTransform: "uppercase" }}>
+        {/* Headline band (compact to avoid scrolling) */}
+        <Box sx={{ display: { xs: "none", lg: "block" }, mb: 2 }}>
+          <Typography sx={{ color: C.text500, fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase" }}>
             Enterprise Identity & Access Platform
           </Typography>
-          <Typography sx={{ fontFamily: '"Orbitron", sans-serif', fontWeight: 900, fontSize: { lg: "2.35rem" }, color: C.text100, letterSpacing: "0.5px", mt: 0.5 }}>
+          <Typography sx={{ fontFamily: '"Orbitron", sans-serif', fontWeight: 900, fontSize: { lg: "2rem" }, color: C.text100, letterSpacing: "0.5px", mt: 0.25 }}>
             Secure authentication for modern organizations
           </Typography>
         </Box>
 
         {/* Main layout: centered card */}
-        <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "center", gap: 4, flexWrap: "wrap" }}>
+        <Box sx={{ display: "flex", alignItems: "stretch", justifyContent: "center", gap: 3, flexWrap: "nowrap" }}>
           {/* Auth Card */}
           <Box
             sx={{
-              width: "100%",
-              maxWidth: 460,
+              width: 460,
+              flexShrink: 0,
               bgcolor: C.char600,
               border: `1px solid ${C.char400}`,
               borderRadius: "18px",
-              p: { xs: 3.5, sm: 5 },
+              p: 4,
               position: "relative",
               boxShadow: "0 28px 90px rgba(0,0,0,0.85), 0 0 0 1px rgba(220,38,38,0.08)",
               overflow: "hidden",
@@ -383,94 +383,94 @@ function LoginForm({ handleLogin, error, isLoading }) {
 
             <Divider sx={{ my: 2.5, borderColor: C.char400 }} />
 
-            {/* Sign in with card */}
-            <Box
-              sx={{
-                bgcolor: C.char700,
-                border: `1px dashed ${C.char400}`,
-                borderRadius: "14px",
-                p: 2,
-                display: "flex",
-                flexDirection: "column",
-                gap: 1.25,
-              }}
-            >
-              <Typography sx={{ color: C.text300, fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.06em" }}>
-                Or sign in with
-              </Typography>
-              <Box sx={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 1 }}>
-                {[{label: 'Google', bg: '#111827', border: C.char400}, {label: 'Microsoft', bg: '#0f172a', border: C.char400}, {label: 'GitHub', bg: '#0b1220', border: C.char400}].map((p) => (
-                  <Button
-                    key={p.label}
-                    variant="outlined"
-                    disabled
-                    sx={{
-                      justifyContent: 'flex-start',
-                      color: C.text100,
-                      borderColor: p.border,
-                      bgcolor: p.bg,
-                      textTransform: 'none',
-                      fontWeight: 700,
-                      fontSize: '0.78rem',
-                      borderRadius: '10px',
-                      py: 1,
-                      '&:hover': { borderColor: C.redLt, bgcolor: `${C.redGlow}` },
-                    }}
-                  >
-                    {p.label}
-                  </Button>
-                ))}
-              </Box>
-              <Typography sx={{ color: C.text500, fontSize: '0.72rem' }}>
-                Federated SSO coming soon. Contact support to enable enterprise SSO.
-              </Typography>
-            </Box>
-
-            <Typography variant="caption" sx={{ display: "block", textAlign: "center", color: C.text500, mt: 2.5, fontSize: "0.68rem", fontFamily: '"Space Grotesk", sans-serif', letterSpacing: "0.06em", textTransform: "uppercase" }}>
+            <Typography variant="caption" sx={{ display: "block", textAlign: "center", color: C.text500, mt: 2, fontSize: "0.68rem", fontFamily: '"Space Grotesk", sans-serif', letterSpacing: "0.06em", textTransform: "uppercase" }}>
               Restricted · Administrators Only · APEX v2.0
             </Typography>
           </Box>
 
-          {/* Right-side value props (desktop) */}
-          <Box sx={{ display: { xs: "none", lg: "flex" }, flexDirection: "column", gap: 1.5, minWidth: 420, flex: 1 }}>
-            <Box sx={{
-              bgcolor: C.char600,
-              border: `1px solid ${C.char400}`,
-              borderRadius: "14px",
-              p: 2,
-            }}>
-              <Typography sx={{ color: C.text100, fontWeight: 700, fontSize: "0.92rem" }}>Enterprise-grade controls</Typography>
-              <Typography sx={{ color: C.text500, fontSize: "0.8rem", mt: 0.5 }}>Role-based access, real-time session intelligence, and anomaly detection.</Typography>
-            </Box>
-            <Box sx={{
-              bgcolor: C.char600,
-              border: `1px solid ${C.char400}`,
-              borderRadius: "14px",
-              p: 2,
-            }}>
-              <Typography sx={{ color: C.text100, fontWeight: 700, fontSize: "0.92rem" }}>Modern authentication</Typography>
-              <Typography sx={{ color: C.text500, fontSize: "0.8rem", mt: 0.5 }}>JWT with revocation, short-lived tokens, and secure session lifecycle.</Typography>
-            </Box>
-            <Box sx={{
-              bgcolor: C.char600,
-              border: `1px solid ${C.char400}`,
-              borderRadius: "14px",
-              p: 2,
-            }}>
-              <Typography sx={{ color: C.text100, fontWeight: 700, fontSize: "0.92rem" }}>Operational excellence</Typography>
-              <Typography sx={{ color: C.text500, fontSize: "0.8rem", mt: 0.5 }}>Live dashboards, alerts, analytics, and observability built-in.</Typography>
+          {/* Right-side: Sign in with Card (frontend only) */}
+          <Box sx={{ width: 420, flexShrink: 0, display: { xs: "none", md: "flex" } }}>
+            <Box
+              sx={{
+                bgcolor: C.char600,
+                border: `1px solid ${C.char400}`,
+                borderRadius: "18px",
+                p: 3,
+                display: "flex",
+                flexDirection: "column",
+                gap: 1.5,
+                alignSelf: "stretch",
+                position: "relative",
+                overflow: "hidden",
+                boxShadow: "0 24px 80px rgba(0,0,0,0.7)",
+                "&::before": {
+                  content: '""',
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: 2,
+                  background: `linear-gradient(90deg, ${C.redLt} 0%, transparent 70%)`,
+                },
+              }}
+            >
+              <Typography sx={{ color: C.text100, fontWeight: 800, fontSize: "1rem", letterSpacing: "0.06em" }}>
+                Sign in with Card
+              </Typography>
+              <Typography sx={{ color: C.text500, fontSize: "0.82rem", lineHeight: 1.5 }}>
+                Tap your authorized smart card on the reader to continue. Ensure your card is registered with the security team.
+              </Typography>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', py: 2 }}>
+                <Box
+                  sx={{
+                    width: 220,
+                    height: 140,
+                    borderRadius: '14px',
+                    border: `1px dashed ${C.char400}`,
+                    bgcolor: C.char700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.02)',
+                    position: 'relative',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <Box sx={{ position: 'absolute', inset: 0, background: `radial-gradient(200px 80px at 50% 10%, ${C.redGlow}, transparent)` }} />
+                  <Typography sx={{ color: C.text300, fontSize: '0.82rem' }}>Tap card here</Typography>
+                </Box>
+              </Box>
+
+              <Button
+                variant="outlined"
+                disabled
+                sx={{
+                  alignSelf: 'flex-start',
+                  borderColor: C.char400,
+                  color: C.text300,
+                  textTransform: 'none',
+                  fontWeight: 700,
+                  borderRadius: '10px',
+                  px: 2,
+                  '&:hover': { borderColor: C.redLt },
+                }}
+              >
+                Configure reader (coming soon)
+              </Button>
+
+              <Typography sx={{ color: C.text500, fontSize: '0.72rem' }}>
+                This option is available for authorized admins with provisioned cards. Backend integration will be added later.
+              </Typography>
             </Box>
           </Box>
         </Box>
 
-        {/* Trust bar */}
-        <Box sx={{ mt: 4, display: "flex", alignItems: "center", justifyContent: "center", gap: 2, flexWrap: "wrap" }}>
-          <Typography sx={{ color: C.text500, fontSize: "0.72rem" }}>Trusted by teams worldwide</Typography>
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <Chip label="ISO 27001" size="small" sx={{ bgcolor: "#0b0f14", border: `1px solid ${C.char400}`, color: C.text300 }} />
-            <Chip label="SOC 2" size="small" sx={{ bgcolor: "#0b0f14", border: `1px solid ${C.char400}`, color: C.text300 }} />
-            <Chip label="GDPR-ready" size="small" sx={{ bgcolor: "#0b0f14", border: `1px solid ${C.char400}`, color: C.text300 }} />
-          </Box>
+        {/* Compact footer to avoid scroll */}
+        <Box sx={{ mt: 2, display: "flex", alignItems: "center", justifyContent: "center", gap: 1.5, flexWrap: "wrap" }}>
+          <Chip label="ISO 27001" size="small" sx={{ bgcolor: "#0b0f14", border: `1px solid ${C.char400}`, color: C.text300 }} />
+          <Chip label="SOC 2" size="small" sx={{ bgcolor: "#0b0f14", border: `1px solid ${C.char400}`, color: C.text300 }} />
+          <Chip label="GDPR-ready" size="small" sx={{ bgcolor: "#0b0f14", border: `1px solid ${C.char400}`, color: C.text300 }} />
         </Box>
       </Box>
     </Box>
