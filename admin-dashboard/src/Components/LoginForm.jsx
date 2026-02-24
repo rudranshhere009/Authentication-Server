@@ -8,6 +8,8 @@ import {
   CircularProgress,
   InputAdornment,
   IconButton,
+  Chip,
+  Divider,
 } from "@mui/material";
 import { VisibilityOff, Visibility } from "@mui/icons-material";
 
@@ -20,6 +22,7 @@ const C = {
   redGlow: "rgba(220,38,38,0.16)",
   char600: "#161B22",
   char700: "#0F1117",
+  char500: "#1C2128",
   char400: "#2D333B",
   text100: "#F0F6FC",
   text300: "#8B949E",
@@ -39,13 +42,13 @@ function LoginForm({ handleLogin, error, isLoading }) {
   const fieldSx = {
     "& .MuiOutlinedInput-root": {
       bgcolor: C.char700,
-      borderRadius: "10px",
+      borderRadius: "12px",
       fontFamily: '"Space Grotesk", sans-serif',
       "& fieldset": { borderColor: C.char400 },
       "&:hover fieldset": { borderColor: C.red },
       "&.Mui-focused fieldset": {
         borderColor: C.red,
-        boxShadow: `0 0 0 3px ${C.redGlow}`,
+        boxShadow: `0 0 0 4px ${C.redGlow}`,
       },
     },
     "& .MuiInputLabel-root": {
@@ -67,245 +70,408 @@ function LoginForm({ handleLogin, error, isLoading }) {
     <Box
       sx={{
         minHeight: "100vh",
+        position: "relative",
+        overflow: "hidden",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(135deg, #010409 0%, #0D1117 100%)",
-        position: "relative",
-        overflow: "hidden",
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          width: 700,
-          height: 700,
-          borderRadius: "50%",
-          background:
-            "radial-gradient(circle, rgba(220,38,38,0.12) 0%, transparent 65%)",
-          top: -250,
-          right: -180,
-          pointerEvents: "none",
-        },
-        "&::after": {
-          content: '""',
-          position: "absolute",
-          width: 450,
-          height: 450,
-          borderRadius: "50%",
-          background:
-            "radial-gradient(circle, rgba(220,38,38,0.05) 0%, transparent 65%)",
-          bottom: -120,
-          left: -100,
-          pointerEvents: "none",
-        },
+        bgcolor: C.char700,
+        background: `radial-gradient(1200px 600px at 85% -10%, rgba(220,38,38,0.18), transparent 60%),\n                    radial-gradient(900px 400px at -10% 110%, rgba(239,68,68,0.10), transparent 60%),\n                    linear-gradient(135deg, #010409 0%, #0D1117 100%)`,
       }}
     >
-      {/* Card */}
+      {/* Top Navigation */}
       <Box
         sx={{
-          width: "100%",
-          maxWidth: 440,
-          mx: 2,
-          bgcolor: C.char600,
-          border: `1px solid ${C.char400}`,
-          borderRadius: "18px",
-          p: { xs: 3.5, sm: 5.5 },
-          position: "relative",
-          zIndex: 1,
-          boxShadow:
-            "0 24px 80px rgba(0,0,0,0.85), 0 0 0 1px rgba(220,38,38,0.1)",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 64,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          px: { xs: 2, md: 4 },
+          borderBottom: `1px solid ${C.char400}`,
+          background: "linear-gradient(180deg, rgba(13,17,23,0.8), rgba(13,17,23,0.2))",
+          backdropFilter: "blur(6px)",
+          zIndex: 3,
         }}
       >
-        {/* Brand */}
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            mb: 4,
-            gap: 1.5,
-          }}
-        >
-          {/* Brand logo */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.25 }}>
           <Box
+            className="logobox"
             sx={{
-              width: 62,
-              height: 62,
-              borderRadius: "16px",
+              width: 34,
+              height: 34,
+              borderRadius: "9px",
               background: `linear-gradient(135deg, ${C.red} 0%, ${C.redDk} 100%)`,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              boxShadow: `0 8px 32px rgba(220,38,38,0.55)`,
+              boxShadow: `0 6px 22px rgba(220,38,38,0.45)`,
+              flexShrink: 0,
+            }}
+          >
+            <Box component="span" sx={{ fontSize: 16, color: "#fff" }}>⚡</Box>
+          </Box>
+          <Typography
+            sx={{
+              fontFamily: '"Orbitron", sans-serif',
+              fontWeight: 800,
+              letterSpacing: 2,
+              color: C.text100,
+            }}
+          >
+            APEX
+          </Typography>
+        </Box>
+        <Box sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center", gap: 1 } }>
+          <Chip label="Docs" size="small" sx={{ bgcolor: "#0b0f14", border: `1px solid ${C.char400}`, color: C.text300 }} />
+          <Chip label="Status: Operational" size="small" sx={{ bgcolor: "#0b0f14", border: `1px solid ${C.char400}`, color: "#22c55e" }} />
+          <Chip label="Support" size="small" sx={{ bgcolor: "#0b0f14", border: `1px solid ${C.char400}`, color: C.text300 }} />
+        </Box>
+      </Box>
+
+      {/* Subtle grid pattern */}
+      <Box
+        aria-hidden
+        sx={{
+          position: "absolute",
+          inset: 0,
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.03) 1px, transparent 1px)`,
+          backgroundSize: "26px 26px",
+          maskImage: "linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,1) 40%)",
+          pointerEvents: "none",
+          zIndex: 1,
+        }}
+      />
+
+      {/* Red matrix particles (CSS-only) */}
+      <Box
+        aria-hidden
+        sx={{
+          position: "absolute",
+          inset: 0,
+          overflow: "hidden",
+          pointerEvents: "none",
+          zIndex: 1,
+        }}
+      >
+        {Array.from({ length: 28 }).map((_, i) => (
+          <Box
+            key={i}
+            sx={{
+              position: "absolute",
+              top: `${Math.random() * 90}%`,
+              left: `${Math.random() * 100}%`,
+              width: 1.2,
+              height: `${Math.random() * 60 + 20}px`,
+              bgcolor: i % 3 === 0 ? C.red : C.redLt,
+              opacity: 0.12 + (i % 5) * 0.04,
+              filter: "blur(0.4px)",
+              transform: "translateZ(0)",
+              animation: `${i % 2 === 0 ? 'fallSlow' : 'fallFast'} ${4 + (i % 7)}s linear ${i * 0.3}s infinite` ,
+            }}
+          />
+        ))}
+      </Box>
+
+      <style>{`
+        @keyframes fallSlow {
+          0% { transform: translate3d(0,-120px,0); opacity: 0; }
+          10% { opacity: .25; }
+          100% { transform: translate3d(0,140vh,0); opacity: 0; }
+        }
+        @keyframes fallFast {
+          0% { transform: translate3d(0,-200px,0); opacity: 0; }
+          10% { opacity: .3; }
+          100% { transform: translate3d(0,180vh,0); opacity: 0; }
+        }
+      `}</style>
+
+      {/* Accent beams */}
+      <Box
+        aria-hidden
+        sx={{
+          position: "absolute",
+          top: { xs: 120, md: 100 },
+          right: -120,
+          width: 420,
+          height: 2,
+          transform: "rotate(-12deg)",
+          background: `linear-gradient(90deg, transparent, ${C.red}, transparent)`,
+          filter: "blur(0.6px)",
+          opacity: 0.7,
+          zIndex: 1,
+        }}
+      />
+      <Box
+        aria-hidden
+        sx={{
+          position: "absolute",
+          bottom: 140,
+          left: -160,
+          width: 520,
+          height: 2,
+          transform: "rotate(18deg)",
+          background: `linear-gradient(90deg, transparent, ${C.redLt}, transparent)`,
+          filter: "blur(0.6px)",
+          opacity: 0.5,
+          zIndex: 1,
+        }}
+      />
+
+      {/* Noise overlay */}
+      <Box
+        aria-hidden
+        sx={{
+          position: "absolute",
+          inset: 0,
+          opacity: 0.05,
+          backgroundImage:
+            "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.2) 2px, rgba(0,0,0,0.2) 4px)",
+          pointerEvents: "none",
+          zIndex: 2,
+        }}
+      />
+
+      {/* Centered container */}
+      <Box sx={{ width: "100%", maxWidth: 1200, mt: { xs: 6, md: 8 }, px: 2, position: "relative", zIndex: 4 }}>
+        {/* Headline band */}
+        <Box sx={{ display: { xs: "none", lg: "block" }, mb: 4 }}>
+          <Typography sx={{ color: C.text500, fontSize: "0.78rem", letterSpacing: "0.12em", textTransform: "uppercase" }}>
+            Enterprise Identity & Access Platform
+          </Typography>
+          <Typography sx={{ fontFamily: '"Orbitron", sans-serif', fontWeight: 900, fontSize: { lg: "2.35rem" }, color: C.text100, letterSpacing: "0.5px", mt: 0.5 }}>
+            Secure authentication for modern organizations
+          </Typography>
+        </Box>
+
+        {/* Main layout: centered card */}
+        <Box sx={{ display: "flex", alignItems: "flex-start", justifyContent: "center", gap: 4, flexWrap: "wrap" }}>
+          {/* Auth Card */}
+          <Box
+            sx={{
+              width: "100%",
+              maxWidth: 460,
+              bgcolor: C.char600,
+              border: `1px solid ${C.char400}`,
+              borderRadius: "18px",
+              p: { xs: 3.5, sm: 5 },
               position: "relative",
-              "&::after": {
+              boxShadow: "0 28px 90px rgba(0,0,0,0.85), 0 0 0 1px rgba(220,38,38,0.08)",
+              overflow: "hidden",
+              "&::before": {
                 content: '""',
                 position: "absolute",
-                inset: -3,
-                borderRadius: "18px",
-                border: `1px solid rgba(220,38,38,0.3)`,
-                pointerEvents: "none",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: 2,
+                background: `linear-gradient(90deg, ${C.red} 0%, ${C.redLt} 40%, transparent 100%)`,
               },
             }}
           >
+            {/* Brand */}
+            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mb: 3.5, gap: 1.25 }}>
+              <Box
+                sx={{
+                  width: 62,
+                  height: 62,
+                  borderRadius: "16px",
+                  background: `linear-gradient(135deg, ${C.red} 0%, ${C.redDk} 100%)`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  boxShadow: `0 10px 36px rgba(220,38,38,0.55)`,
+                  position: "relative",
+                  "&::after": {
+                    content: '""',
+                    position: "absolute",
+                    inset: -3,
+                    borderRadius: "18px",
+                    border: `1px solid rgba(220,38,38,0.3)`,
+                  },
+                }}
+              >
+                <Box component="span" sx={{ fontSize: "2rem", lineHeight: 1, color: "#fff" }}>⚡</Box>
+              </Box>
+              <Box sx={{ textAlign: "center" }}>
+                <Typography sx={{ fontWeight: 900, fontSize: "1.6rem", color: C.text100, letterSpacing: "3px", fontFamily: '"Orbitron", sans-serif' }}>
+                  APEX
+                </Typography>
+                <Typography sx={{ color: C.text500, fontSize: "0.78rem", mt: 0.4, fontFamily: '"Space Grotesk", sans-serif', letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                  Auth Platform
+                </Typography>
+              </Box>
+            </Box>
+
+            <Typography sx={{ color: C.text300, fontSize: "0.85rem", mb: 2.5, textAlign: "center", fontFamily: '"Space Grotesk", sans-serif' }}>
+              Sign in to the administrator portal
+            </Typography>
+
+            <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2.2 }}>
+              <TextField
+                label="Username"
+                variant="outlined"
+                value={adminUser}
+                onChange={(e) => setAdminUser(e.target.value)}
+                required
+                disabled={isLoading}
+                autoComplete="username"
+                fullWidth
+                sx={fieldSx}
+              />
+
+              <TextField
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                variant="outlined"
+                value={adminPass}
+                onChange={(e) => setAdminPass(e.target.value)}
+                required
+                disabled={isLoading}
+                autoComplete="current-password"
+                fullWidth
+                sx={fieldSx}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setShowPassword((p) => !p)} edge="end" aria-label="toggle password">
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              <Button
+                type="submit"
+                variant="contained"
+                size="large"
+                disabled={isLoading}
+                fullWidth
+                sx={{
+                  mt: 0.5,
+                  py: 1.5,
+                  borderRadius: "12px",
+                  fontWeight: 800,
+                  fontSize: "0.98rem",
+                  fontFamily: '"Space Grotesk", sans-serif',
+                  letterSpacing: "0.04em",
+                  background: `linear-gradient(135deg, ${C.red} 0%, ${C.redDk} 100%)`,
+                  boxShadow: `0 10px 30px rgba(220,38,38,0.45)`,
+                  "&:hover": {
+                    background: `linear-gradient(135deg, ${C.redLt} 0%, ${C.red} 100%)`,
+                    boxShadow: `0 14px 40px rgba(220,38,38,0.6)`,
+                    transform: "translateY(-1px)",
+                  },
+                  "&:active": { transform: "translateY(0)" },
+                  "&.Mui-disabled": { background: C.char700, color: C.text500, boxShadow: "none" },
+                  transition: "all 0.2s ease",
+                }}
+              >
+                {isLoading ? <CircularProgress size={22} sx={{ color: "#fff" }} /> : "Sign In"}
+              </Button>
+            </Box>
+
+            {error && (
+              <Alert severity="error" sx={{ mt: 2.5, bgcolor: "rgba(220,38,38,0.1)", border: "1px solid rgba(220,38,38,0.3)", color: "#FDA4AF", borderRadius: "12px", "& .MuiAlert-icon": { color: "#F43F5E" } }}>
+                {error}
+              </Alert>
+            )}
+
+            <Divider sx={{ my: 2.5, borderColor: C.char400 }} />
+
+            {/* Sign in with card */}
             <Box
-              component="span"
-              sx={{ fontSize: "2rem", lineHeight: 1, userSelect: "none" }}
+              sx={{
+                bgcolor: C.char700,
+                border: `1px dashed ${C.char400}`,
+                borderRadius: "14px",
+                p: 2,
+                display: "flex",
+                flexDirection: "column",
+                gap: 1.25,
+              }}
             >
-              ⚡
+              <Typography sx={{ color: C.text300, fontSize: "0.8rem", fontWeight: 600, letterSpacing: "0.06em" }}>
+                Or sign in with
+              </Typography>
+              <Box sx={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 1 }}>
+                {[{label: 'Google', bg: '#111827', border: C.char400}, {label: 'Microsoft', bg: '#0f172a', border: C.char400}, {label: 'GitHub', bg: '#0b1220', border: C.char400}].map((p) => (
+                  <Button
+                    key={p.label}
+                    variant="outlined"
+                    disabled
+                    sx={{
+                      justifyContent: 'flex-start',
+                      color: C.text100,
+                      borderColor: p.border,
+                      bgcolor: p.bg,
+                      textTransform: 'none',
+                      fontWeight: 700,
+                      fontSize: '0.78rem',
+                      borderRadius: '10px',
+                      py: 1,
+                      '&:hover': { borderColor: C.redLt, bgcolor: `${C.redGlow}` },
+                    }}
+                  >
+                    {p.label}
+                  </Button>
+                ))}
+              </Box>
+              <Typography sx={{ color: C.text500, fontSize: '0.72rem' }}>
+                Federated SSO coming soon. Contact support to enable enterprise SSO.
+              </Typography>
+            </Box>
+
+            <Typography variant="caption" sx={{ display: "block", textAlign: "center", color: C.text500, mt: 2.5, fontSize: "0.68rem", fontFamily: '"Space Grotesk", sans-serif', letterSpacing: "0.06em", textTransform: "uppercase" }}>
+              Restricted · Administrators Only · APEX v2.0
+            </Typography>
+          </Box>
+
+          {/* Right-side value props (desktop) */}
+          <Box sx={{ display: { xs: "none", lg: "flex" }, flexDirection: "column", gap: 1.5, minWidth: 420, flex: 1 }}>
+            <Box sx={{
+              bgcolor: C.char600,
+              border: `1px solid ${C.char400}`,
+              borderRadius: "14px",
+              p: 2,
+            }}>
+              <Typography sx={{ color: C.text100, fontWeight: 700, fontSize: "0.92rem" }}>Enterprise-grade controls</Typography>
+              <Typography sx={{ color: C.text500, fontSize: "0.8rem", mt: 0.5 }}>Role-based access, real-time session intelligence, and anomaly detection.</Typography>
+            </Box>
+            <Box sx={{
+              bgcolor: C.char600,
+              border: `1px solid ${C.char400}`,
+              borderRadius: "14px",
+              p: 2,
+            }}>
+              <Typography sx={{ color: C.text100, fontWeight: 700, fontSize: "0.92rem" }}>Modern authentication</Typography>
+              <Typography sx={{ color: C.text500, fontSize: "0.8rem", mt: 0.5 }}>JWT with revocation, short-lived tokens, and secure session lifecycle.</Typography>
+            </Box>
+            <Box sx={{
+              bgcolor: C.char600,
+              border: `1px solid ${C.char400}`,
+              borderRadius: "14px",
+              p: 2,
+            }}>
+              <Typography sx={{ color: C.text100, fontWeight: 700, fontSize: "0.92rem" }}>Operational excellence</Typography>
+              <Typography sx={{ color: C.text500, fontSize: "0.8rem", mt: 0.5 }}>Live dashboards, alerts, analytics, and observability built-in.</Typography>
             </Box>
           </Box>
+        </Box>
 
-          <Box sx={{ textAlign: "center" }}>
-            <Typography
-              sx={{
-                fontWeight: 900,
-                fontSize: "1.6rem",
-                color: C.text100,
-                letterSpacing: "3px",
-                fontFamily: '"Orbitron", sans-serif',
-              }}
-            >
-              APEX
-            </Typography>
-            <Typography
-              sx={{
-                color: C.text500,
-                fontSize: "0.78rem",
-                mt: 0.4,
-                fontFamily: '"Space Grotesk", sans-serif',
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-              }}
-            >
-              Auth Platform
-            </Typography>
+        {/* Trust bar */}
+        <Box sx={{ mt: 4, display: "flex", alignItems: "center", justifyContent: "center", gap: 2, flexWrap: "wrap" }}>
+          <Typography sx={{ color: C.text500, fontSize: "0.72rem" }}>Trusted by teams worldwide</Typography>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <Chip label="ISO 27001" size="small" sx={{ bgcolor: "#0b0f14", border: `1px solid ${C.char400}`, color: C.text300 }} />
+            <Chip label="SOC 2" size="small" sx={{ bgcolor: "#0b0f14", border: `1px solid ${C.char400}`, color: C.text300 }} />
+            <Chip label="GDPR-ready" size="small" sx={{ bgcolor: "#0b0f14", border: `1px solid ${C.char400}`, color: C.text300 }} />
           </Box>
         </Box>
-
-        <Typography
-          sx={{
-            color: C.text300,
-            fontSize: "0.85rem",
-            mb: 3,
-            textAlign: "center",
-            fontFamily: '"Space Grotesk", sans-serif',
-          }}
-        >
-          Sign in to the administrator portal
-        </Typography>
-
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
-          sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
-        >
-          <TextField
-            label="Username"
-            variant="outlined"
-            value={adminUser}
-            onChange={(e) => setAdminUser(e.target.value)}
-            required
-            disabled={isLoading}
-            autoComplete="username"
-            fullWidth
-            sx={fieldSx}
-          />
-
-          <TextField
-            label="Password"
-            type={showPassword ? "text" : "password"}
-            variant="outlined"
-            value={adminPass}
-            onChange={(e) => setAdminPass(e.target.value)}
-            required
-            disabled={isLoading}
-            autoComplete="current-password"
-            fullWidth
-            sx={fieldSx}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={() => setShowPassword((p) => !p)}
-                    edge="end"
-                    aria-label="toggle password"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-          />
-
-          <Button
-            type="submit"
-            variant="contained"
-            size="large"
-            disabled={isLoading}
-            fullWidth
-            sx={{
-              mt: 0.5,
-              py: 1.5,
-              borderRadius: "10px",
-              fontWeight: 700,
-              fontSize: "0.95rem",
-              fontFamily: '"Space Grotesk", sans-serif',
-              letterSpacing: "0.04em",
-              background: `linear-gradient(135deg, ${C.red} 0%, ${C.redDk} 100%)`,
-              boxShadow: `0 8px 28px rgba(220,38,38,0.45)`,
-              "&:hover": {
-                background: `linear-gradient(135deg, ${C.redLt} 0%, ${C.red} 100%)`,
-                boxShadow: `0 12px 36px rgba(220,38,38,0.6)`,
-                transform: "translateY(-1px)",
-              },
-              "&:active": { transform: "translateY(0)" },
-              "&.Mui-disabled": {
-                background: C.char700,
-                color: C.text500,
-                boxShadow: "none",
-              },
-              transition: "all 0.2s ease",
-            }}
-          >
-            {isLoading ? (
-              <CircularProgress size={22} sx={{ color: "#fff" }} />
-            ) : (
-              "Sign In"
-            )}
-          </Button>
-        </Box>
-
-        {error && (
-          <Alert
-            severity="error"
-            sx={{
-              mt: 2.5,
-              bgcolor: "rgba(220,38,38,0.1)",
-              border: "1px solid rgba(220,38,38,0.3)",
-              color: "#FDA4AF",
-              borderRadius: "10px",
-              "& .MuiAlert-icon": { color: "#F43F5E" },
-            }}
-          >
-            {error}
-          </Alert>
-        )}
-
-        <Typography
-          variant="caption"
-          sx={{
-            display: "block",
-            textAlign: "center",
-            color: C.text500,
-            mt: 3,
-            fontSize: "0.68rem",
-            fontFamily: '"Space Grotesk", sans-serif',
-            letterSpacing: "0.06em",
-            textTransform: "uppercase",
-          }}
-        >
-          Restricted · Administrators Only · APEX v2.0
-        </Typography>
       </Box>
     </Box>
   );
