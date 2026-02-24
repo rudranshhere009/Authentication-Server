@@ -29,6 +29,8 @@ function JwtSessionsTable({
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [revokeLoading, setRevokeLoading] = useState(false);
   const [revokingSessionId, setRevokingSessionId] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deletingSessionId, setDeletingSessionId] = useState(null);
 
   // FIXED: Use jwtLoading if available, otherwise fall back to isLoading
   const loading = jwtLoading !== undefined ? jwtLoading : isLoading;
@@ -42,6 +44,19 @@ function JwtSessionsTable({
       setTimeout(() => {
         setRevokeLoading(false);
         setRevokingSessionId(null);
+      }, 300);
+    }, 300);
+  };
+
+  // Handle the completion of delete operation
+  const handleDeleteComplete = () => {
+    setTimeout(() => {
+      if (fetchpage) {
+        fetchpage(page, rowsPerPage);
+      }
+      setTimeout(() => {
+        setDeleteLoading(false);
+        setDeletingSessionId(null);
       }, 300);
     }, 300);
   };
@@ -108,11 +123,11 @@ function JwtSessionsTable({
           flexDirection: "column",
           bgcolor: "rgba(8,7,10,0.85)",
         }}
-        open={revokeLoading}
+        open={revokeLoading || deleteLoading}
       >
         <CircularProgress sx={{ color: "#DC2626" }} />
         <Typography sx={{ mt: 2, color: "#F0F6FC", fontSize: "0.88rem" }}>
-          Revoking session…
+          {deleteLoading ? "Deleting session…" : "Revoking session…"}
         </Typography>
       </Backdrop>
 
@@ -166,7 +181,7 @@ function JwtSessionsTable({
               <TableCell>Username</TableCell>
               <TableCell>Login Time</TableCell>
               <TableCell sx={{ width: "100px" }}>Status</TableCell>
-              <TableCell sx={{ width: "120px" }}>Action</TableCell>
+              <TableCell sx={{ width: "160px" }}>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -206,6 +221,7 @@ function JwtSessionsTable({
                     />
                   </TableCell>
                   <TableCell>
+                    {/* Revoke for active sessions */}
                     {s.is_active && onRevokeSession && (
                       <Button
                         variant="outlined"
@@ -220,13 +236,14 @@ function JwtSessionsTable({
                               handleRevokeComplete();
                             });
                         }}
-                        disabled={revokeLoading}
+                        disabled={revokeLoading || deleteLoading}
                         startIcon={
                           revokingSessionId === s.id && revokeLoading ? (
                             <CircularProgress size={12} color="inherit" />
                           ) : null
                         }
                         sx={{
+                          mr: 1,
                           borderColor: "rgba(244,63,94,0.4)",
                           color: "#F43F5E",
                           fontSize: "0.72rem",
@@ -244,6 +261,60 @@ function JwtSessionsTable({
                         {revokingSessionId === s.id && revokeLoading
                           ? "Revoking…"
                           : "Revoke"}
+                      </Button>
+                    )}
+
+                    {/* Delete for revoked sessions only */}
+                    {!s.is_active && (
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        color="error"
+                        onClick={async () => {
+                          try {
+                            setDeleteLoading(true);
+                            setDeletingSessionId(s.id);
+                            const token = sessionStorage.getItem('token');
+                            const API_URL =
+                              import.meta.env.VITE_API_URL ||
+                              import.meta.env.REACT_APP_API_URL ||
+                              "http://localhost:8080";
+                            const res = await fetch(`${API_URL}/admin/jwt-sessions/${s.id}`, {
+                              method: 'DELETE',
+                              headers: { 'Authorization': `Bearer ${token}` }
+                            });
+                            if (!res.ok) {
+                              const t = await res.text();
+                              console.error('Delete failed:', t);
+                            }
+                            handleDeleteComplete();
+                          } catch (e) {
+                            console.error('Error deleting session', e);
+                            handleDeleteComplete();
+                          }
+                        }}
+                        disabled={deleteLoading || revokeLoading}
+                        startIcon={
+                          deletingSessionId === s.id && deleteLoading ? (
+                            <CircularProgress size={12} color="inherit" />
+                          ) : null
+                        }
+                        sx={{
+                          borderColor: "rgba(239, 68, 68, 0.4)",
+                          color: "#ef4444",
+                          fontSize: "0.72rem",
+                          fontWeight: 600,
+                          textTransform: "none",
+                          borderRadius: "7px",
+                          py: 0.4,
+                          px: 1.25,
+                          "&:hover": {
+                            borderColor: "#ef4444",
+                            bgcolor: "rgba(239, 68, 68, 0.08)",
+                          },
+                        }}
+                      >
+                        {deletingSessionId === s.id && deleteLoading ? 'Deleting…' : 'Delete'}
                       </Button>
                     )}
                   </TableCell>
