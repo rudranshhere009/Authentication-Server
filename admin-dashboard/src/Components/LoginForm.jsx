@@ -242,84 +242,59 @@ function LoginForm({ handleLogin, error, isLoading }) {
 
       {/* Centered container */}
       <Box sx={{ width: "100%", maxWidth: 1200, mt: { xs: 6, md: 8 }, px: 2, position: "relative", zIndex: 4 }}>
-        {/* Headline band (compact to avoid scrolling) */}
-        <Box sx={{ display: { xs: "none", lg: "block" }, mb: 2 }}>
-          <Typography sx={{ color: C.text500, fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase" }}>
-            Enterprise Identity & Access Platform
-          </Typography>
-          <Typography sx={{ fontFamily: '"Orbitron", sans-serif', fontWeight: 900, fontSize: { lg: "2rem" }, color: C.text100, letterSpacing: "0.5px", mt: 0.25 }}>
-            Secure authentication for modern organizations
-          </Typography>
-        </Box>
+        {/* Minimal header removed for a cleaner, glass-card focus */}
+        <Box sx={{ display: 'none' }} />
 
-        {/* Centered Welcome Box */}
-        <Box sx={{ display: "flex", alignItems: "stretch", justifyContent: "center" }}>
+        {/* Centered Minimal Glass Card */}
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Box
             sx={{
-              width: 860,
+              width: 720,
               maxWidth: '92vw',
-              bgcolor: C.char600,
-              border: `1px solid ${C.char400}`,
-              borderRadius: '18px',
-              p: 4,
-              boxShadow: '0 28px 90px rgba(0,0,0,0.85), 0 0 0 1px rgba(220,38,38,0.08)',
+              borderRadius: '20px',
+              p: 3,
               position: 'relative',
               overflow: 'hidden',
-              display: 'grid',
-              gridTemplateColumns: { xs: '1fr', md: '1.1fr 0.9fr' },
-              gap: 3,
+              background: 'rgba(22,27,34,0.55)',
+              border: `1px solid ${C.char400}`,
+              boxShadow: '0 30px 100px rgba(0,0,0,0.8)',
+              backdropFilter: 'blur(10px)',
               '&::before': {
                 content: '""',
                 position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                height: 2,
-                background: `linear-gradient(90deg, ${C.red} 0%, ${C.redLt} 40%, transparent 100%)`,
+                inset: 0,
+                background: `radial-gradient(800px 200px at 50% -10%, rgba(220,38,38,0.20), transparent 50%)`,
+                pointerEvents: 'none',
               },
             }}
           >
-            {/* Left: Branding + Features */}
-            <Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, mb: 1.5 }}>
-                <Box sx={{ width: 38, height: 38, borderRadius: '10px', background: `linear-gradient(135deg, ${C.red} 0%, ${C.redDk} 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 8px 26px rgba(220,38,38,0.45)` }}>
-                  <Box component="span" sx={{ fontSize: 18, color: '#fff' }}>⚡</Box>
-                </Box>
-                <Typography sx={{ fontFamily: '"Orbitron", sans-serif', fontWeight: 900, letterSpacing: 2, color: C.text100, fontSize: '1.2rem' }}>APEX</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, mb: 1.25 }}>
+              <Box sx={{ width: 34, height: 34, borderRadius: '10px', background: `linear-gradient(135deg, ${C.red} 0%, ${C.redDk} 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 8px 22px rgba(220,38,38,0.45)` }}>
+                <Box component="span" sx={{ fontSize: 16, color: '#fff' }}>⚡</Box>
               </Box>
-              <Typography sx={{ color: C.text500, fontSize: '0.72rem', letterSpacing: '0.12em', textTransform: 'uppercase' }}>Enterprise Identity & Access Platform</Typography>
-              <Typography sx={{ fontFamily: '"Orbitron", sans-serif', fontWeight: 900, fontSize: { xs: '1.4rem', md: '1.7rem' }, color: C.text100, letterSpacing: '0.5px', mt: 0.75 }}>Secure authentication for modern organizations</Typography>
-
-              <Box sx={{ mt: 2.25, display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.25 }}>
-                {[{
-                  h: 'Enterprise-grade controls',
-                  p: 'Role-based access, real-time session intelligence, anomaly detection.'
-                }, {
-                  h: 'Modern authentication',
-                  p: 'JWT with revocation, short-lived tokens, secure lifecycle.'
-                }, {
-                  h: 'Operational excellence',
-                  p: 'Live dashboards, alerts, analytics, observability.'
-                }, {
-                  h: 'Hardened platform',
-                  p: 'Best-practice encryption, secure defaults, audits.'
-                }].map((f, i) => (
-                  <Box key={i} sx={{ bgcolor: C.char700, border: `1px solid ${C.char400}`, borderRadius: '12px', p: 1.25 }}>
-                    <Typography sx={{ color: C.text100, fontWeight: 700, fontSize: '0.9rem' }}>{f.h}</Typography>
-                    <Typography sx={{ color: C.text500, fontSize: '0.78rem', mt: 0.25 }}>{f.p}</Typography>
-                  </Box>
-                ))}
-              </Box>
-
-              <Button onClick={() => setOpenChooser(true)} variant="contained" sx={{ mt: 2.25, borderRadius: '10px', px: 2.25, py: 1.1, fontWeight: 800, background: `linear-gradient(135deg, ${C.red} 0%, ${C.redDk} 100%)`, '&:hover': { background: `linear-gradient(135deg, ${C.redLt} 0%, ${C.red} 100%)` } }}>
-                Let’s Go
-              </Button>
+              <Typography sx={{ fontFamily: '"Orbitron", sans-serif', fontWeight: 800, letterSpacing: 2, color: C.text100 }}>APEX</Typography>
             </Box>
 
-            {/* Right: Visual */}
-            <Box sx={{ position: 'relative', borderRadius: '14px', border: `1px solid ${C.char400}`, bgcolor: C.char700, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Box sx={{ position: 'absolute', inset: 0, background: `radial-gradient(220px 90px at 50% 15%, ${C.redGlow}, transparent)` }} />
-              <Typography sx={{ color: C.text300, fontSize: '0.9rem' }}>Welcome to APEX Admin</Typography>
+            <Typography sx={{ color: C.text100, fontWeight: 900, fontSize: '1.6rem', mb: 1 }}>
+              Secure authentication for modern organizations
+            </Typography>
+            <Typography sx={{ color: C.text500, fontSize: '0.85rem', mb: 2 }}>
+              Role-based access · JWT · revocation · analytics · zero-trust ready
+            </Typography>
+
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.25, mb: 2 }}>
+              {[{h:'Enterprise-grade controls',p:'RBAC, session intel, anomaly detection.'},{h:'Modern authentication',p:'JWT, revocation, short-lived tokens.'},{h:'Operational excellence',p:'Dashboards, alerts, analytics.'},{h:'Hardened platform',p:'Encryption, secure defaults, audits.'}].map((f,i)=> (
+                <Box key={i} sx={{ bgcolor: 'rgba(13,17,23,0.55)', border: `1px solid ${C.char400}`, borderRadius: '12px', p: 1.25 }}>
+                  <Typography sx={{ color: C.text100, fontWeight: 700, fontSize: '0.9rem' }}>{f.h}</Typography>
+                  <Typography sx={{ color: C.text500, fontSize: '0.78rem', mt: 0.25 }}>{f.p}</Typography>
+                </Box>
+              ))}
+            </Box>
+
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+              <Button onClick={() => setOpenChooser(true)} variant="contained" sx={{ borderRadius: '10px', px: 2.25, py: 1.1, fontWeight: 800, background: `linear-gradient(135deg, ${C.red} 0%, ${C.redDk} 100%)`, '&:hover': { background: `linear-gradient(135deg, ${C.redLt} 0%, ${C.red} 100%)` } }}>
+                Let’s Go
+              </Button>
             </Box>
           </Box>
         </Box>
