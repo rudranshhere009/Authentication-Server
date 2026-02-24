@@ -34,6 +34,11 @@ function LoginForm({ handleLogin, error, isLoading }) {
   const [adminPass, setAdminPass] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  // Welcome -> chooser -> specific modals
+  const [openChooser, setOpenChooser] = useState(false);
+  const [openPassModal, setOpenPassModal] = useState(false);
+  const [openCardModal, setOpenCardModal] = useState(false);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     handleLogin(adminUser, adminPass);
@@ -247,23 +252,25 @@ function LoginForm({ handleLogin, error, isLoading }) {
           </Typography>
         </Box>
 
-        {/* Main layout: centered card */}
-        <Box sx={{ display: "flex", alignItems: "stretch", justifyContent: "center", gap: 3, flexWrap: "nowrap" }}>
-          {/* Auth Card */}
+        {/* Centered Welcome Box */}
+        <Box sx={{ display: "flex", alignItems: "stretch", justifyContent: "center" }}>
           <Box
             sx={{
-              width: 460,
-              flexShrink: 0,
+              width: 860,
+              maxWidth: '92vw',
               bgcolor: C.char600,
               border: `1px solid ${C.char400}`,
-              borderRadius: "18px",
+              borderRadius: '18px',
               p: 4,
-              position: "relative",
-              boxShadow: "0 28px 90px rgba(0,0,0,0.85), 0 0 0 1px rgba(220,38,38,0.08)",
-              overflow: "hidden",
-              "&::before": {
+              boxShadow: '0 28px 90px rgba(0,0,0,0.85), 0 0 0 1px rgba(220,38,38,0.08)',
+              position: 'relative',
+              overflow: 'hidden',
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', md: '1.1fr 0.9fr' },
+              gap: 3,
+              '&::before': {
                 content: '""',
-                position: "absolute",
+                position: 'absolute',
                 top: 0,
                 left: 0,
                 right: 0,
@@ -272,196 +279,103 @@ function LoginForm({ handleLogin, error, isLoading }) {
               },
             }}
           >
-            {/* Brand */}
-            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mb: 3.5, gap: 1.25 }}>
-              <Box
-                sx={{
-                  width: 62,
-                  height: 62,
-                  borderRadius: "16px",
-                  background: `linear-gradient(135deg, ${C.red} 0%, ${C.redDk} 100%)`,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  boxShadow: `0 10px 36px rgba(220,38,38,0.55)`,
-                  position: "relative",
-                  "&::after": {
-                    content: '""',
-                    position: "absolute",
-                    inset: -3,
-                    borderRadius: "18px",
-                    border: `1px solid rgba(220,38,38,0.3)`,
-                  },
-                }}
-              >
-                <Box component="span" sx={{ fontSize: "2rem", lineHeight: 1, color: "#fff" }}>⚡</Box>
-              </Box>
-              <Box sx={{ textAlign: "center" }}>
-                <Typography sx={{ fontWeight: 900, fontSize: "1.6rem", color: C.text100, letterSpacing: "3px", fontFamily: '"Orbitron", sans-serif' }}>
-                  APEX
-                </Typography>
-                <Typography sx={{ color: C.text500, fontSize: "0.78rem", mt: 0.4, fontFamily: '"Space Grotesk", sans-serif', letterSpacing: "0.1em", textTransform: "uppercase" }}>
-                  Auth Platform
-                </Typography>
-              </Box>
-            </Box>
-
-            <Typography sx={{ color: C.text300, fontSize: "0.85rem", mb: 2.5, textAlign: "center", fontFamily: '"Space Grotesk", sans-serif' }}>
-              Sign in to the administrator portal
-            </Typography>
-
-            <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2.2 }}>
-              <TextField
-                label="Username"
-                variant="outlined"
-                value={adminUser}
-                onChange={(e) => setAdminUser(e.target.value)}
-                required
-                disabled={isLoading}
-                autoComplete="username"
-                fullWidth
-                sx={fieldSx}
-              />
-
-              <TextField
-                label="Password"
-                type={showPassword ? "text" : "password"}
-                variant="outlined"
-                value={adminPass}
-                onChange={(e) => setAdminPass(e.target.value)}
-                required
-                disabled={isLoading}
-                autoComplete="current-password"
-                fullWidth
-                sx={fieldSx}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => setShowPassword((p) => !p)} edge="end" aria-label="toggle password">
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-
-              <Button
-                type="submit"
-                variant="contained"
-                size="large"
-                disabled={isLoading}
-                fullWidth
-                sx={{
-                  mt: 0.5,
-                  py: 1.5,
-                  borderRadius: "12px",
-                  fontWeight: 800,
-                  fontSize: "0.98rem",
-                  fontFamily: '"Space Grotesk", sans-serif',
-                  letterSpacing: "0.04em",
-                  background: `linear-gradient(135deg, ${C.red} 0%, ${C.redDk} 100%)`,
-                  boxShadow: `0 10px 30px rgba(220,38,38,0.45)`,
-                  "&:hover": {
-                    background: `linear-gradient(135deg, ${C.redLt} 0%, ${C.red} 100%)`,
-                    boxShadow: `0 14px 40px rgba(220,38,38,0.6)`,
-                    transform: "translateY(-1px)",
-                  },
-                  "&:active": { transform: "translateY(0)" },
-                  "&.Mui-disabled": { background: C.char700, color: C.text500, boxShadow: "none" },
-                  transition: "all 0.2s ease",
-                }}
-              >
-                {isLoading ? <CircularProgress size={22} sx={{ color: "#fff" }} /> : "Sign In"}
-              </Button>
-            </Box>
-
-            {error && (
-              <Alert severity="error" sx={{ mt: 2.5, bgcolor: "rgba(220,38,38,0.1)", border: "1px solid rgba(220,38,38,0.3)", color: "#FDA4AF", borderRadius: "12px", "& .MuiAlert-icon": { color: "#F43F5E" } }}>
-                {error}
-              </Alert>
-            )}
-
-            <Divider sx={{ my: 2.5, borderColor: C.char400 }} />
-
-            <Typography variant="caption" sx={{ display: "block", textAlign: "center", color: C.text500, mt: 2, fontSize: "0.68rem", fontFamily: '"Space Grotesk", sans-serif', letterSpacing: "0.06em", textTransform: "uppercase" }}>
-              Restricted · Administrators Only · APEX v2.0
-            </Typography>
-          </Box>
-
-          {/* Right-side: Sign in with Card (frontend only) */}
-          <Box sx={{ width: 420, flexShrink: 0, display: { xs: "none", md: "flex" } }}>
-            <Box
-              sx={{
-                bgcolor: C.char600,
-                border: `1px solid ${C.char400}`,
-                borderRadius: "18px",
-                p: 3,
-                display: "flex",
-                flexDirection: "column",
-                gap: 1.5,
-                alignSelf: "stretch",
-                position: "relative",
-                overflow: "hidden",
-                boxShadow: "0 24px 80px rgba(0,0,0,0.7)",
-                "&::before": {
-                  content: '""',
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: 2,
-                  background: `linear-gradient(90deg, ${C.redLt} 0%, transparent 70%)`,
-                },
-              }}
-            >
-              <Typography sx={{ color: C.text100, fontWeight: 800, fontSize: "1rem", letterSpacing: "0.06em" }}>
-                Sign in with Card
-              </Typography>
-              <Typography sx={{ color: C.text500, fontSize: "0.82rem", lineHeight: 1.5 }}>
-                Tap your authorized smart card on the reader to continue. Ensure your card is registered with the security team.
-              </Typography>
-
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', py: 2 }}>
-                <Box
-                  sx={{
-                    width: 220,
-                    height: 140,
-                    borderRadius: '14px',
-                    border: `1px dashed ${C.char400}`,
-                    bgcolor: C.char700,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.02)',
-                    position: 'relative',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <Box sx={{ position: 'absolute', inset: 0, background: `radial-gradient(200px 80px at 50% 10%, ${C.redGlow}, transparent)` }} />
-                  <Typography sx={{ color: C.text300, fontSize: '0.82rem' }}>Tap card here</Typography>
+            {/* Left: Branding + Features */}
+            <Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, mb: 1.5 }}>
+                <Box sx={{ width: 38, height: 38, borderRadius: '10px', background: `linear-gradient(135deg, ${C.red} 0%, ${C.redDk} 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 8px 26px rgba(220,38,38,0.45)` }}>
+                  <Box component="span" sx={{ fontSize: 18, color: '#fff' }}>⚡</Box>
                 </Box>
+                <Typography sx={{ fontFamily: '"Orbitron", sans-serif', fontWeight: 900, letterSpacing: 2, color: C.text100, fontSize: '1.2rem' }}>APEX</Typography>
+              </Box>
+              <Typography sx={{ color: C.text500, fontSize: '0.72rem', letterSpacing: '0.12em', textTransform: 'uppercase' }}>Enterprise Identity & Access Platform</Typography>
+              <Typography sx={{ fontFamily: '"Orbitron", sans-serif', fontWeight: 900, fontSize: { xs: '1.4rem', md: '1.7rem' }, color: C.text100, letterSpacing: '0.5px', mt: 0.75 }}>Secure authentication for modern organizations</Typography>
+
+              <Box sx={{ mt: 2.25, display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.25 }}>
+                {[{
+                  h: 'Enterprise-grade controls',
+                  p: 'Role-based access, real-time session intelligence, anomaly detection.'
+                }, {
+                  h: 'Modern authentication',
+                  p: 'JWT with revocation, short-lived tokens, secure lifecycle.'
+                }, {
+                  h: 'Operational excellence',
+                  p: 'Live dashboards, alerts, analytics, observability.'
+                }, {
+                  h: 'Hardened platform',
+                  p: 'Best-practice encryption, secure defaults, audits.'
+                }].map((f, i) => (
+                  <Box key={i} sx={{ bgcolor: C.char700, border: `1px solid ${C.char400}`, borderRadius: '12px', p: 1.25 }}>
+                    <Typography sx={{ color: C.text100, fontWeight: 700, fontSize: '0.9rem' }}>{f.h}</Typography>
+                    <Typography sx={{ color: C.text500, fontSize: '0.78rem', mt: 0.25 }}>{f.p}</Typography>
+                  </Box>
+                ))}
               </Box>
 
-              <Button
-                variant="outlined"
-                disabled
-                sx={{
-                  alignSelf: 'flex-start',
-                  borderColor: C.char400,
-                  color: C.text300,
-                  textTransform: 'none',
-                  fontWeight: 700,
-                  borderRadius: '10px',
-                  px: 2,
-                  '&:hover': { borderColor: C.redLt },
-                }}
-              >
-                Configure reader (coming soon)
+              <Button onClick={() => setOpenChooser(true)} variant="contained" sx={{ mt: 2.25, borderRadius: '10px', px: 2.25, py: 1.1, fontWeight: 800, background: `linear-gradient(135deg, ${C.red} 0%, ${C.redDk} 100%)`, '&:hover': { background: `linear-gradient(135deg, ${C.redLt} 0%, ${C.red} 100%)` } }}>
+                Let’s Go
               </Button>
+            </Box>
 
-              <Typography sx={{ color: C.text500, fontSize: '0.72rem' }}>
-                This option is available for authorized admins with provisioned cards. Backend integration will be added later.
-              </Typography>
+            {/* Right: Visual */}
+            <Box sx={{ position: 'relative', borderRadius: '14px', border: `1px solid ${C.char400}`, bgcolor: C.char700, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Box sx={{ position: 'absolute', inset: 0, background: `radial-gradient(220px 90px at 50% 15%, ${C.redGlow}, transparent)` }} />
+              <Typography sx={{ color: C.text300, fontSize: '0.9rem' }}>Welcome to APEX Admin</Typography>
+            </Box>
+          </Box>
+        </Box>
+
+        {/* Chooser Modal */}
+        <Box sx={{ position: 'fixed', inset: 0, display: openChooser ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center', zIndex: 20 }}>
+          <Box onClick={() => setOpenChooser(false)} sx={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)' }} />
+          <Box sx={{ position: 'relative', width: 680, maxWidth: '94vw', bgcolor: C.char600, border: `1px solid ${C.char400}`, borderRadius: '16px', p: 3, boxShadow: '0 24px 90px rgba(0,0,0,0.9)' }}>
+            <Typography sx={{ color: C.text100, fontWeight: 800, mb: 1 }}>Choose a sign-in method</Typography>
+            <Typography sx={{ color: C.text500, fontSize: '0.85rem', mb: 2 }}>Select how you want to access the administrator portal.</Typography>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
+              <Box onClick={() => { setOpenChooser(false); setOpenPassModal(true); }} sx={{ cursor: 'pointer', bgcolor: C.char700, border: `1px solid ${C.char400}`, borderRadius: '12px', p: 2, '&:hover': { borderColor: C.redLt } }}>
+                <Typography sx={{ color: C.text100, fontWeight: 700 }}>Authorized Password</Typography>
+                <Typography sx={{ color: C.text500, fontSize: '0.82rem', mt: 0.5 }}>Use your assigned admin credentials</Typography>
+              </Box>
+              <Box onClick={() => { setOpenChooser(false); setOpenCardModal(true); }} sx={{ cursor: 'pointer', bgcolor: C.char700, border: `1px solid ${C.char400}`, borderRadius: '12px', p: 2, '&:hover': { borderColor: C.redLt } }}>
+                <Typography sx={{ color: C.text100, fontWeight: 700 }}>Card</Typography>
+                <Typography sx={{ color: C.text500, fontSize: '0.82rem', mt: 0.5 }}>Tap your authorized smart card</Typography>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+
+        {/* Password Modal */}
+        <Box sx={{ position: 'fixed', inset: 0, display: openPassModal ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center', zIndex: 30 }}>
+          <Box onClick={() => setOpenPassModal(false)} sx={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)' }} />
+          <Box sx={{ position: 'relative', width: 520, maxWidth: '92vw', bgcolor: C.char600, border: `1px solid ${C.char400}`, borderRadius: '16px', p: 3 }}>
+            <Typography sx={{ color: C.text100, fontWeight: 800, mb: 1 }}>Authorized Password</Typography>
+            <Typography sx={{ color: C.text500, fontSize: '0.85rem', mb: 2 }}>Enter your credentials to continue.</Typography>
+            <Box component="form" onSubmit={(e) => { handleSubmit(e); }} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <TextField label="Username" value={adminUser} onChange={(e) => setAdminUser(e.target.value)} required disabled={isLoading} autoComplete="username" fullWidth sx={fieldSx} />
+              <TextField label="Password" type={showPassword ? 'text' : 'password'} value={adminPass} onChange={(e) => setAdminPass(e.target.value)} required disabled={isLoading} autoComplete="current-password" fullWidth sx={fieldSx} InputProps={{ endAdornment: (<InputAdornment position='end'><IconButton onClick={() => setShowPassword(p => !p)} edge='end' aria-label='toggle password'>{showPassword ? <VisibilityOff /> : <Visibility />}</IconButton></InputAdornment>) }} />
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+                <Button onClick={() => setOpenPassModal(false)} sx={{ color: C.text300, textTransform: 'none' }}>Cancel</Button>
+                <Button type="submit" variant="contained" disabled={isLoading} sx={{ fontWeight: 800, textTransform: 'none', background: `linear-gradient(135deg, ${C.red} 0%, ${C.redDk} 100%)`, '&:hover': { background: `linear-gradient(135deg, ${C.redLt} 0%, ${C.red} 100%)` } }}>{isLoading ? <CircularProgress size={18} sx={{ color: '#fff' }} /> : 'Sign In'}</Button>
+              </Box>
+            </Box>
+            {error && (<Alert severity="error" sx={{ mt: 2, bgcolor: 'rgba(220,38,38,0.1)', border: '1px solid rgba(220,38,38,0.3)', color: '#FDA4AF', borderRadius: '12px' }}>{error}</Alert>)}
+          </Box>
+        </Box>
+
+        {/* Card Modal (frontend only) */}
+        <Box sx={{ position: 'fixed', inset: 0, display: openCardModal ? 'flex' : 'none', alignItems: 'center', justifyContent: 'center', zIndex: 30 }}>
+          <Box onClick={() => setOpenCardModal(false)} sx={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.6)' }} />
+          <Box sx={{ position: 'relative', width: 520, maxWidth: '92vw', bgcolor: C.char600, border: `1px solid ${C.char400}`, borderRadius: '16px', p: 3 }}>
+            <Typography sx={{ color: C.text100, fontWeight: 800, mb: 1 }}>Sign in with Card</Typography>
+            <Typography sx={{ color: C.text500, fontSize: '0.85rem', mb: 2 }}>Tap your authorized smart card on the reader to continue.</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', py: 2 }}>
+              <Box sx={{ width: 260, height: 160, borderRadius: '14px', border: `1px dashed ${C.char400}`, bgcolor: C.char700, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden', boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.02)' }}>
+                <Box sx={{ position: 'absolute', inset: 0, background: `radial-gradient(240px 100px at 50% 10%, ${C.redGlow}, transparent)` }} />
+                <Typography sx={{ color: C.text300, fontSize: '0.9rem' }}>Tap card here</Typography>
+              </Box>
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+              <Button onClick={() => setOpenCardModal(false)} sx={{ color: C.text300, textTransform: 'none' }}>Close</Button>
+              <Button disabled variant="outlined" sx={{ color: C.text300, borderColor: C.char400, textTransform: 'none', fontWeight: 700 }}>Configure reader (coming soon)</Button>
             </Box>
           </Box>
         </Box>
