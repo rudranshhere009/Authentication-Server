@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Typography,
   Box,
@@ -38,6 +38,20 @@ function LoginForm({ handleLogin, error, isLoading }) {
   const [openChooser, setOpenChooser] = useState(false);
   const [openPassModal, setOpenPassModal] = useState(false);
   const [openCardModal, setOpenCardModal] = useState(false);
+  const containerRef = useRef(null);
+  const [parallax, setParallax] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMove = (e) => {
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      const x = Math.max(-1, Math.min(1, (e.clientX - cx) / cx));
+      const y = Math.max(-1, Math.min(1, (e.clientY - cy) / cy));
+      setParallax({ x, y });
+    };
+    window.addEventListener("mousemove", handleMove);
+    return () => window.removeEventListener("mousemove", handleMove);
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -73,6 +87,7 @@ function LoginForm({ handleLogin, error, isLoading }) {
 
   return (
     <Box
+      ref={containerRef}
       sx={{
         height: "100vh",
         position: "relative",
@@ -151,12 +166,16 @@ function LoginForm({ handleLogin, error, isLoading }) {
         }}
       />
 
-      {/* Background spectral blobs (minimal, smooth motion) */}
+      {/* Background spectral blobs (parallax + smooth motion) */}
       <Box aria-hidden sx={{ position: "absolute", inset: 0, zIndex: 1, pointerEvents: "none", overflow: "hidden" }}>
-        {/* Warm blob */}
-        <Box sx={{ position: "absolute", width: 900, height: 900, top: -220, left: -140, filter: "blur(60px)", opacity: 0.35, animation: "blobA 18s ease-in-out infinite alternate" , background: "radial-gradient(closest-side, rgba(255,0,128,0.7), rgba(255,120,0,0.5), transparent 70%)" }} />
-        {/* Cool blob */}
-        <Box sx={{ position: "absolute", width: 800, height: 800, bottom: -180, right: -160, filter: "blur(70px)", opacity: 0.33, animation: "blobB 22s ease-in-out infinite alternate" , background: "radial-gradient(closest-side, rgba(0,208,255,0.7), rgba(124,58,237,0.55), transparent 70%)" }} />
+        {/* Warm blob (parallax wrapper) */}
+        <Box sx={{ position: "absolute", top: -220, left: -140, willChange: 'transform', transform: `translate3d(${parallax.x * 20}px, ${parallax.y * 10}px, 0)` }}>
+          <Box sx={{ width: 900, height: 900, filter: "blur(60px)", opacity: 0.35, animation: "blobA 18s ease-in-out infinite alternate" , background: "radial-gradient(closest-side, rgba(255,0,128,0.7), rgba(255,120,0,0.5), transparent 70%)" }} />
+        </Box>
+        {/* Cool blob (parallax wrapper) */}
+        <Box sx={{ position: "absolute", bottom: -180, right: -160, willChange: 'transform', transform: `translate3d(${parallax.x * -16}px, ${parallax.y * -12}px, 0)` }}>
+          <Box sx={{ width: 800, height: 800, filter: "blur(70px)", opacity: 0.33, animation: "blobB 22s ease-in-out infinite alternate" , background: "radial-gradient(closest-side, rgba(0,208,255,0.7), rgba(124,58,237,0.55), transparent 70%)" }} />
+        </Box>
         {/* Spectral band */}
         <Box sx={{ position: "absolute", left: "-10%", right: "-10%", bottom: -140, height: 380, filter: "blur(14px)", opacity: 0.45, background: "radial-gradient(120% 60% at 10% 80%, rgba(0,140,255,0.7) 0%, rgba(255,0,204,0.55) 35%, rgba(255,180,0,0.45) 60%, transparent 75%)", animation: "spectralPan 30s linear infinite alternate" }} />
       </Box>
@@ -211,6 +230,10 @@ function LoginForm({ handleLogin, error, isLoading }) {
               border: `1px solid ${C.char400}`,
               boxShadow: '0 30px 100px rgba(0,0,0,0.8)',
               backdropFilter: 'blur(10px)',
+              willChange: 'transform',
+              transform: `perspective(1000px) rotateX(${parallax.y * -2}deg) rotateY(${parallax.x * 2}deg)`,
+              transition: 'transform 0.06s linear',
+              boxShadow: '0 30px 100px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.35)',
               '&::before': {
                 content: '""',
                 position: 'absolute',
@@ -218,14 +241,19 @@ function LoginForm({ handleLogin, error, isLoading }) {
                 background: `radial-gradient(800px 200px at 50% -10%, rgba(220,38,38,0.20), transparent 50%)`,
                 pointerEvents: 'none',
               },
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                inset: 0,
+                boxShadow: 'inset 0 0 80px rgba(0,0,0,0.22)'
+              },
             }}
           >
             {/* Glass header controls like reference */}
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.25 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', mb: 1.25 }}>
               <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, bgcolor: 'rgba(0,0,0,0.35)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '999px', p: 0.5 }}>
                 <Box sx={{ px: 1.5, py: 0.5, color: C.text100, fontWeight: 700, fontSize: '0.82rem', bgcolor: 'rgba(255,255,255,0.06)', borderRadius: '999px', boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08)' }}>Sign in</Box>
               </Box>
-              <Box sx={{ width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.text300, border: '1px solid rgba(255,255,255,0.12)', bgcolor: 'rgba(0,0,0,0.25)' }}>×</Box>
             </Box>
 
             <Typography sx={{ color: C.text100, fontWeight: 900, fontSize: '1.5rem', mb: 1 }}>
