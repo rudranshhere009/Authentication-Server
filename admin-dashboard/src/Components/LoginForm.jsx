@@ -151,80 +151,32 @@ function LoginForm({ handleLogin, error, isLoading }) {
         }}
       />
 
-      {/* Red matrix particles (CSS-only) */}
-      <Box
-        aria-hidden
-        sx={{
-          position: "absolute",
-          inset: 0,
-          overflow: "hidden",
-          pointerEvents: "none",
-          zIndex: 1,
-        }}
-      >
-        {Array.from({ length: 28 }).map((_, i) => (
-          <Box
-            key={i}
-            sx={{
-              position: "absolute",
-              top: `${Math.random() * 90}%`,
-              left: `${Math.random() * 100}%`,
-              width: 1.2,
-              height: `${Math.random() * 60 + 20}px`,
-              bgcolor: i % 3 === 0 ? C.red : C.redLt,
-              opacity: 0.12 + (i % 5) * 0.04,
-              filter: "blur(0.4px)",
-              transform: "translateZ(0)",
-              animation: `${i % 2 === 0 ? 'fallSlow' : 'fallFast'} ${4 + (i % 7)}s linear ${i * 0.3}s infinite` ,
-            }}
-          />
-        ))}
+      {/* Background spectral blobs (minimal, smooth motion) */}
+      <Box aria-hidden sx={{ position: "absolute", inset: 0, zIndex: 1, pointerEvents: "none", overflow: "hidden" }}>
+        {/* Warm blob */}
+        <Box sx={{ position: "absolute", width: 900, height: 900, top: -220, left: -140, filter: "blur(60px)", opacity: 0.35, animation: "blobA 18s ease-in-out infinite alternate" , background: "radial-gradient(closest-side, rgba(255,0,128,0.7), rgba(255,120,0,0.5), transparent 70%)" }} />
+        {/* Cool blob */}
+        <Box sx={{ position: "absolute", width: 800, height: 800, bottom: -180, right: -160, filter: "blur(70px)", opacity: 0.33, animation: "blobB 22s ease-in-out infinite alternate" , background: "radial-gradient(closest-side, rgba(0,208,255,0.7), rgba(124,58,237,0.55), transparent 70%)" }} />
+        {/* Spectral band */}
+        <Box sx={{ position: "absolute", left: "-10%", right: "-10%", bottom: -140, height: 380, filter: "blur(14px)", opacity: 0.45, background: "radial-gradient(120% 60% at 10% 80%, rgba(0,140,255,0.7) 0%, rgba(255,0,204,0.55) 35%, rgba(255,180,0,0.45) 60%, transparent 75%)", animation: "spectralPan 30s linear infinite alternate" }} />
       </Box>
 
       <style>{`
-        @keyframes fallSlow {
-          0% { transform: translate3d(0,-120px,0); opacity: 0; }
-          10% { opacity: .25; }
-          100% { transform: translate3d(0,140vh,0); opacity: 0; }
+        @keyframes blobA {
+          0% { transform: translate3d(0,0,0) scale(1); }
+          100% { transform: translate3d(60px, 40px, 0) scale(1.06); }
         }
-        @keyframes fallFast {
-          0% { transform: translate3d(0,-200px,0); opacity: 0; }
-          10% { opacity: .3; }
-          100% { transform: translate3d(0,180vh,0); opacity: 0; }
+        @keyframes blobB {
+          0% { transform: translate3d(0,0,0) scale(1); }
+          100% { transform: translate3d(-40px, -30px, 0) scale(1.08); }
+        }
+        @keyframes spectralPan {
+          0% { transform: translateX(0) scale(1); }
+          100% { transform: translateX(6%) scale(1.04); }
         }
       `}</style>
 
-      {/* Accent beams */}
-      <Box
-        aria-hidden
-        sx={{
-          position: "absolute",
-          top: { xs: 120, md: 100 },
-          right: -120,
-          width: 420,
-          height: 2,
-          transform: "rotate(-12deg)",
-          background: `linear-gradient(90deg, transparent, ${C.red}, transparent)`,
-          filter: "blur(0.6px)",
-          opacity: 0.7,
-          zIndex: 1,
-        }}
-      />
-      <Box
-        aria-hidden
-        sx={{
-          position: "absolute",
-          bottom: 140,
-          left: -160,
-          width: 520,
-          height: 2,
-          transform: "rotate(18deg)",
-          background: `linear-gradient(90deg, transparent, ${C.redLt}, transparent)`,
-          filter: "blur(0.6px)",
-          opacity: 0.5,
-          zIndex: 1,
-        }}
-      />
+      
 
       {/* Noise overlay */}
       <Box
@@ -268,18 +220,19 @@ function LoginForm({ handleLogin, error, isLoading }) {
               },
             }}
           >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25, mb: 1.25 }}>
-              <Box sx={{ width: 34, height: 34, borderRadius: '10px', background: `linear-gradient(135deg, ${C.red} 0%, ${C.redDk} 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 8px 22px rgba(220,38,38,0.45)` }}>
-                <Box component="span" sx={{ fontSize: 16, color: '#fff' }}>⚡</Box>
+            {/* Glass header controls like reference */}
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.25 }}>
+              <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, bgcolor: 'rgba(0,0,0,0.35)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '999px', p: 0.5 }}>
+                <Box sx={{ px: 1.5, py: 0.5, color: C.text100, fontWeight: 700, fontSize: '0.82rem', bgcolor: 'rgba(255,255,255,0.06)', borderRadius: '999px', boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08)' }}>Sign in</Box>
               </Box>
-              <Typography sx={{ fontFamily: '"Orbitron", sans-serif', fontWeight: 800, letterSpacing: 2, color: C.text100 }}>APEX</Typography>
+              <Box sx={{ width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.text300, border: '1px solid rgba(255,255,255,0.12)', bgcolor: 'rgba(0,0,0,0.25)' }}>×</Box>
             </Box>
 
-            <Typography sx={{ color: C.text100, fontWeight: 900, fontSize: '1.6rem', mb: 1 }}>
-              Secure authentication for modern organizations
+            <Typography sx={{ color: C.text100, fontWeight: 900, fontSize: '1.5rem', mb: 1 }}>
+              Administrator access
             </Typography>
-            <Typography sx={{ color: C.text500, fontSize: '0.85rem', mb: 2 }}>
-              Role-based access · JWT · revocation · analytics · zero-trust ready
+            <Typography sx={{ color: C.text500, fontSize: '0.84rem', mb: 2 }}>
+              Role-based access · JWT revocation · analytics
             </Typography>
 
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.25, mb: 2 }}>
@@ -292,7 +245,7 @@ function LoginForm({ handleLogin, error, isLoading }) {
             </Box>
 
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-              <Button onClick={() => setOpenChooser(true)} variant="contained" sx={{ borderRadius: '10px', px: 2.25, py: 1.1, fontWeight: 800, background: `linear-gradient(135deg, ${C.red} 0%, ${C.redDk} 100%)`, '&:hover': { background: `linear-gradient(135deg, ${C.redLt} 0%, ${C.red} 100%)` } }}>
+              <Button onClick={() => setOpenChooser(true)} variant="contained" sx={{ borderRadius: '10px', px: 2.4, py: 1.1, fontWeight: 800, color: '#111', background: 'linear-gradient(180deg, #ffffff, #dcdcdc)', boxShadow: '0 6px 16px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.75)', '&:hover': { background: 'linear-gradient(180deg, #f5f5f5, #cfcfcf)' } }}>
                 Let’s Go
               </Button>
             </Box>
