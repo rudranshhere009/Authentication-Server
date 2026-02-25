@@ -65,6 +65,7 @@ const StatPill = ({ label, value, color = C.orange }) => (
 const AllJwtSessionsPage = ({
   title,
   jwtSessions,
+  tableJwtSessions,
   jwtTotal,
   jwtLoading,
   fetchJwtSessionsPage,
@@ -305,7 +306,7 @@ const AllJwtSessionsPage = ({
         {/* Table */}
         <JwtSessionsTable
           title=""
-          jwtsessions={jwtSessions}
+          jwtsessions={tableJwtSessions || []}
           onRevokeSession={onRevokeSession}
           isLoading={isLoading}
           total={jwtTotal}

@@ -31,37 +31,16 @@ function JwtSessionsTable({
   const [revokingSessionId, setRevokingSessionId] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [deletingSessionId, setDeletingSessionId] = useState(null);
+  const [displaySessions, setDisplaySessions] = useState(jwtsessions || []);
 
   // FIXED: Use jwtLoading if available, otherwise fall back to isLoading
   const loading = jwtLoading !== undefined ? jwtLoading : isLoading;
 
-  // Handle the completion of revoke operation
-  const handleRevokeComplete = () => {
-    setTimeout(() => {
-      if (fetchpage) {
-        fetchpage(page, rowsPerPage);
-      }
-      setTimeout(() => {
-        setRevokeLoading(false);
-        setRevokingSessionId(null);
-      }, 300);
-    }, 300);
-  };
+  useEffect(() => {
+    setDisplaySessions(jwtsessions || []);
+  }, [jwtsessions]);
 
-  // Handle the completion of delete operation
-  const handleDeleteComplete = () => {
-    setTimeout(() => {
-      if (fetchpage) {
-        fetchpage(page, rowsPerPage);
-      }
-      setTimeout(() => {
-        setDeleteLoading(false);
-        setDeletingSessionId(null);
-      }, 300);
-    }, 300);
-  };
-
-  // Refresh data when pagination changes and when jwtsessions prop changes
+  // Refresh data when pagination changes
   useEffect(() => {
     if (fetchpage) {
       console.log(
@@ -69,7 +48,7 @@ function JwtSessionsTable({
       );
       fetchpage(page, rowsPerPage);
     }
-  }, [page, rowsPerPage, jwtsessions?.length]); // Added jwtsessions.length as dependency to detect changes
+  }, [page, rowsPerPage]);
 
   const handleChangePage = (event, newPage) => {
     console.log(`JwtSessionsTable: Changing to page ${newPage}`);
@@ -107,7 +86,7 @@ function JwtSessionsTable({
 
   console.log("JwtSessionsTable rendering with:", {
     title,
-    sessionsCount: jwtsessions?.length || 0,
+    sessionsCount: displaySessions?.length || 0,
     total,
     page,
     rowsPerPage,
@@ -185,8 +164,8 @@ function JwtSessionsTable({
             </TableRow>
           </TableHead>
           <TableBody>
-            {jwtsessions && jwtsessions.length > 0 ? (
-              jwtsessions.map((s, index) => (
+            {displaySessions && displaySessions.length > 0 ? (
+              displaySessions.map((s, index) => (
                 <TableRow key={s.id || index}>
                   <TableCell
                     sx={{
@@ -229,11 +208,28 @@ function JwtSessionsTable({
                         onClick={() => {
                           setRevokeLoading(true);
                           setRevokingSessionId(s.id);
+                          setDisplaySessions((prev) =>
+                            prev.map((item) =>
+                              item.id === s.id
+                                ? { ...item, is_active: false }
+                                : item,
+                            ),
+                          );
                           onRevokeSession(s.id)
-                            .then(() => handleRevokeComplete())
+                            .then(async () => {
+                              if (fetchpage) {
+                                await fetchpage(page, rowsPerPage);
+                              }
+                            })
                             .catch((err) => {
                               console.error("Error revoking session:", err);
-                              handleRevokeComplete();
+                              if (fetchpage) {
+                                fetchpage(page, rowsPerPage);
+                              }
+                            })
+                            .finally(() => {
+                              setRevokeLoading(false);
+                              setRevokingSessionId(null);
                             });
                         }}
                         disabled={revokeLoading || deleteLoading}
@@ -274,6 +270,9 @@ function JwtSessionsTable({
                           try {
                             setDeleteLoading(true);
                             setDeletingSessionId(s.id);
+                            setDisplaySessions((prev) =>
+                              prev.filter((item) => item.id !== s.id),
+                            );
                             const token = sessionStorage.getItem('token');
                             const API_URL =
                               import.meta.env.VITE_API_URL ||
@@ -286,11 +285,19 @@ function JwtSessionsTable({
                             if (!res.ok) {
                               const t = await res.text();
                               console.error('Delete failed:', t);
+                              throw new Error(t || "Failed to delete session");
                             }
-                            handleDeleteComplete();
+                            if (fetchpage) {
+                              await fetchpage(page, rowsPerPage);
+                            }
                           } catch (e) {
                             console.error('Error deleting session', e);
-                            handleDeleteComplete();
+                            if (fetchpage) {
+                              fetchpage(page, rowsPerPage);
+                            }
+                          } finally {
+                            setDeleteLoading(false);
+                            setDeletingSessionId(null);
                           }
                         }}
                         disabled={deleteLoading || revokeLoading}

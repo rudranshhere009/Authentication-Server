@@ -363,6 +363,7 @@ function App() {
                           <AllJwtSessionsPage
                             title="All JWT Sessions"
                             jwtSessions={jwtSessions}
+                            tableJwtSessions={tableJwtSessions}
                             jwtTotal={jwtTotal}
                             jwtLoading={jwtLoading}
                             fetchJwtSessionsPage={fetchJwtSessionsPage}
