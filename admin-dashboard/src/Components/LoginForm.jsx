@@ -345,7 +345,23 @@ function LoginForm({ handleLogin, error, isLoading }) {
           </Typography>
         </Box>
         <Box sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center", gap: 1 } }>
-          <Chip label="Docs" size="small" sx={{ bgcolor: "rgba(11,15,20,0.72)", border: `1px solid ${C.char400}`, color: C.text300, fontWeight: 600, '& .MuiChip-label': { px: 0.8 } }} />
+          <Chip
+            label="Docs"
+            size="small"
+            component="a"
+            href="/steps-to-use.pdf"
+            clickable
+            download="steps to use.pdf"
+            sx={{
+              bgcolor: "rgba(11,15,20,0.72)",
+              border: `1px solid ${C.char400}`,
+              color: C.text300,
+              fontWeight: 600,
+              textDecoration: "none",
+              "& .MuiChip-label": { px: 0.8 },
+              "&:hover": { borderColor: C.redLt, color: C.text100 },
+            }}
+          />
           <Chip label="Status: Operational" size="small" sx={{ bgcolor: "rgba(16,185,129,0.12)", border: `1px solid rgba(16,185,129,0.32)`, color: "#34d399", fontWeight: 700, '& .MuiChip-label': { px: 0.8 } }} />
           <Chip label="Support" size="small" sx={{ bgcolor: "rgba(11,15,20,0.72)", border: `1px solid ${C.char400}`, color: C.text300, fontWeight: 600, '& .MuiChip-label': { px: 0.8 } }} />
         </Box>
