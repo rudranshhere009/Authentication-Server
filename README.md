@@ -23,32 +23,32 @@ Key outcomes delivered by the product:
 
 ## Overview of Project
 
-1. Image 1  
-![Image 1](Refrence%20Images/img-1.png)
+1. Welcome Page  
+![Welcome Page](Refrence%20Images/img-1.png)
 
-2. Image 2  
-![Image 2](Refrence%20Images/img-2.png)
+2. Main Dashboard & Admin's Hub  
+![Main Dashboard & Admin's Hub](Refrence%20Images/img-2.png)
 
-3. Image 3  
-![Image 3](Refrence%20Images/img-3.png)
+3. User-Profile Section  
+![User-Profile Section](Refrence%20Images/img-3.png)
 
-4. Image 4  
-![Image 4](Refrence%20Images/img-4.png)
+4. Analytics Section  
+![Analytics Section](Refrence%20Images/img-4.png)
 
-5. Image 5  
-![Image 5](Refrence%20Images/img-5.png)
+5. Summary Of Analytics  
+![Summary Of Analytics](Refrence%20Images/img-5.png)
 
-6. Image 6  
-![Image 6](Refrence%20Images/img-6.png)
+6. Weekly & Monthly Time-based Metrics  
+![Weekly & Monthly Time-based Metrics](Refrence%20Images/img-6.png)
 
-7. Image 7  
-![Image 7](Refrence%20Images/img-7.png)
+7. Heatmap Section  
+![Heatmap Section](Refrence%20Images/img-7.png)
 
-8. Image 8  
-![Image 8](Refrence%20Images/img-8.png)
+8. Reports Section  
+![Reports Section](Refrence%20Images/img-8.png)
 
-9. Image 9  
-![Image 9](Refrence%20Images/img-9.png)
+9. Security Settings & System Control  
+![Security Settings & System Control](Refrence%20Images/img-9.png)
 
 ## :sparkles: Product Capabilities
 
