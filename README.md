@@ -21,22 +21,34 @@ Key outcomes delivered by the product:
 - Login time and logout time visibility via session history endpoints
 - Linux endpoint telemetry channel for host/network activity reporting
 
-## :camera: Screenshots (SS)
+## Overview of Project
 
-1. Screenshot 1  
-![Screenshot 1](Refrence%20Images/img-1.png)
+1. Image 1  
+![Image 1](Refrence%20Images/img-1.png)
 
-2. Screenshot 2  
-![Screenshot 2](Refrence%20Images/img-2.png)
+2. Image 2  
+![Image 2](Refrence%20Images/img-2.png)
 
-3. Screenshot 3  
-![Screenshot 3](Refrence%20Images/img-3.png)
+3. Image 3  
+![Image 3](Refrence%20Images/img-3.png)
 
-4. Screenshot 4  
-![Screenshot 4](Refrence%20Images/img-4.png)
+4. Image 4  
+![Image 4](Refrence%20Images/img-4.png)
 
-5. Screenshot 5  
-![Screenshot 5](Refrence%20Images/img-5.png)
+5. Image 5  
+![Image 5](Refrence%20Images/img-5.png)
+
+6. Image 6  
+![Image 6](Refrence%20Images/img-6.png)
+
+7. Image 7  
+![Image 7](Refrence%20Images/img-7.png)
+
+8. Image 8  
+![Image 8](Refrence%20Images/img-8.png)
+
+9. Image 9  
+![Image 9](Refrence%20Images/img-9.png)
 
 ## :sparkles: Product Capabilities
 
