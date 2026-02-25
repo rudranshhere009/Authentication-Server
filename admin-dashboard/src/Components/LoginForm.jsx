@@ -10,7 +10,15 @@ import {
   IconButton,
   Chip,
 } from "@mui/material";
-import { VisibilityOff, Visibility } from "@mui/icons-material";
+import {
+  VisibilityOff,
+  Visibility,
+  AdminPanelSettingsRounded,
+  InsightsRounded,
+  SecurityRounded,
+  KeyRounded,
+  CreditCardRounded,
+} from "@mui/icons-material";
 
 import "../index.css";
 
@@ -71,10 +79,10 @@ function LoginForm({ handleLogin, error, isLoading }) {
   };
 
   const heroCardSx = {
-    width: 720,
+    width: 760,
     maxWidth: "92vw",
     borderRadius: "20px",
-    p: 3,
+    p: { xs: 2.2, sm: 3 },
     position: "relative",
     overflow: "hidden",
     background: "linear-gradient(180deg, rgba(12,16,24,0.28), rgba(8,10,16,0.22))",
@@ -113,6 +121,61 @@ function LoginForm({ handleLogin, error, isLoading }) {
       background: "linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.09), rgba(255,255,255,0))",
       animation: "glassDrift 8s ease-in-out infinite alternate",
     },
+    "& .hero-ring": {
+      position: "absolute",
+      width: 220,
+      height: 220,
+      borderRadius: "50%",
+      right: -86,
+      top: -74,
+      border: "1px solid rgba(255,100,100,0.25)",
+      boxShadow: "inset 0 0 0 1px rgba(255,100,100,0.08)",
+      animation: "ringOrbit 14s linear infinite",
+      pointerEvents: "none",
+    },
+    "& .hero-grid": {
+      position: "absolute",
+      inset: 0,
+      opacity: 0.08,
+      backgroundImage:
+        "repeating-linear-gradient(0deg, rgba(255,92,92,0.18) 0 1px, transparent 1px 24px), repeating-linear-gradient(90deg, rgba(255,92,92,0.18) 0 1px, transparent 1px 24px)",
+      pointerEvents: "none",
+    },
+    "& .hero-title": {
+      fontFamily: '"Orbitron", "Space Grotesk", sans-serif',
+      fontWeight: 900,
+      letterSpacing: "0.02em",
+      color: C.text100,
+      textShadow: "0 6px 22px rgba(0,0,0,0.42)",
+    },
+    "& .feature-card": {
+      bgcolor: "rgba(13,17,23,0.2)",
+      border: "1px solid rgba(255,255,255,0.24)",
+      borderRadius: "12px",
+      p: 1.25,
+      backdropFilter: "blur(10px)",
+      transition:
+        "transform 180ms ease, border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease",
+      "&:hover": {
+        transform: "translateY(-3px)",
+        borderColor: "rgba(255,255,255,0.4)",
+        backgroundColor: "rgba(13,17,23,0.3)",
+        boxShadow: "0 10px 18px rgba(0,0,0,0.26)",
+      },
+    },
+    "& .feature-icon": {
+      width: 26,
+      height: 26,
+      borderRadius: "8px",
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      color: "#ffb3b3",
+      bgcolor: "rgba(220,38,38,0.14)",
+      border: "1px solid rgba(255,120,120,0.24)",
+      boxShadow: "inset 0 0 0 1px rgba(255,120,120,0.08)",
+      flexShrink: 0,
+    },
   };
 
   const modalShellSx = {
@@ -141,6 +204,17 @@ function LoginForm({ handleLogin, error, isLoading }) {
     boxShadow: "0 26px 95px rgba(0,0,0,0.64), inset 0 1px 0 rgba(255,255,255,0.2)",
     backdropFilter: "blur(16px)",
     animation: "modalIn 260ms cubic-bezier(.2,.7,.2,1) both",
+    overflow: "hidden",
+    "&::before": {
+      content: '""',
+      position: "absolute",
+      left: 0,
+      right: 0,
+      top: 0,
+      height: "2px",
+      background:
+        "linear-gradient(90deg, rgba(255,96,96,0.72), rgba(255,96,96,0.24), rgba(255,96,96,0))",
+    },
   };
 
   const embers = [
@@ -154,6 +228,56 @@ function LoginForm({ handleLogin, error, isLoading }) {
     { left: "74%", size: 2, dur: "6.4s", delay: "-4.9s", op: 0.27 },
     { left: "85%", size: 3, dur: "4.8s", delay: "-2.4s", op: 0.41 },
     { left: "93%", size: 2, dur: "5.6s", delay: "-3.5s", op: 0.33 },
+  ];
+
+  const featureCards = [
+    {
+      title: "Policy-grade access",
+      desc: "RBAC, privilege boundaries, and strict role enforcement.",
+      icon: <AdminPanelSettingsRounded sx={{ fontSize: 16 }} />,
+      meta: "RBAC",
+    },
+    {
+      title: "Realtime intelligence",
+      desc: "Session telemetry and high-signal anomaly insights.",
+      icon: <InsightsRounded sx={{ fontSize: 16 }} />,
+      meta: "Live",
+    },
+    {
+      title: "Hardened by default",
+      desc: "Secure defaults, token controls, and audit integrity.",
+      icon: <SecurityRounded sx={{ fontSize: 16 }} />,
+      meta: "Secure",
+    },
+    {
+      title: "Token lifecycle control",
+      desc: "Issue, revoke, and trace JWT sessions with confidence.",
+      icon: <KeyRounded sx={{ fontSize: 16 }} />,
+      meta: "JWT",
+    },
+  ];
+
+  const signInMethods = [
+    {
+      id: "password",
+      title: "Authorized Password",
+      desc: "Use assigned administrator credentials with role policy validation.",
+      icon: <KeyRounded sx={{ fontSize: 17 }} />,
+      onClick: () => {
+        setOpenChooser(false);
+        setOpenPassModal(true);
+      },
+    },
+    {
+      id: "card",
+      title: "Smart Card",
+      desc: "Tap a provisioned enterprise card for rapid secure sign-in.",
+      icon: <CreditCardRounded sx={{ fontSize: 17 }} />,
+      onClick: () => {
+        setOpenChooser(false);
+        setOpenCardModal(true);
+      },
+    },
   ];
 
   return (
@@ -221,9 +345,9 @@ function LoginForm({ handleLogin, error, isLoading }) {
           </Typography>
         </Box>
         <Box sx={{ display: { xs: "none", sm: "flex" }, alignItems: "center", gap: 1 } }>
-          <Chip label="Docs" size="small" sx={{ bgcolor: "#0b0f14", border: `1px solid ${C.char400}`, color: C.text300 }} />
-          <Chip label="Status: Operational" size="small" sx={{ bgcolor: "#0b0f14", border: `1px solid ${C.char400}`, color: "#22c55e" }} />
-          <Chip label="Support" size="small" sx={{ bgcolor: "#0b0f14", border: `1px solid ${C.char400}`, color: C.text300 }} />
+          <Chip label="Docs" size="small" sx={{ bgcolor: "rgba(11,15,20,0.72)", border: `1px solid ${C.char400}`, color: C.text300, fontWeight: 600, '& .MuiChip-label': { px: 0.8 } }} />
+          <Chip label="Status: Operational" size="small" sx={{ bgcolor: "rgba(16,185,129,0.12)", border: `1px solid rgba(16,185,129,0.32)`, color: "#34d399", fontWeight: 700, '& .MuiChip-label': { px: 0.8 } }} />
+          <Chip label="Support" size="small" sx={{ bgcolor: "rgba(11,15,20,0.72)", border: `1px solid ${C.char400}`, color: C.text300, fontWeight: 600, '& .MuiChip-label': { px: 0.8 } }} />
         </Box>
       </Box>
 
@@ -286,9 +410,17 @@ function LoginForm({ handleLogin, error, isLoading }) {
           0% { opacity: 0.035; }
           100% { opacity: 0.012; }
         }
+        @keyframes ringOrbit {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
         @keyframes glassDrift {
           0% { transform: translateX(-14%); }
           100% { transform: translateX(14%); }
+        }
+        @keyframes featureIn {
+          0% { opacity: 0; transform: translateY(10px) scale(0.985); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
         }
         @keyframes heroIn {
           0% { opacity: 0; transform: translateY(16px) scale(0.985); }
@@ -336,31 +468,51 @@ function LoginForm({ handleLogin, error, isLoading }) {
         {/* Centered Minimal Glass Card */}
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Box sx={heroCardSx}>
+            <Box className="hero-grid" />
+            <Box className="hero-ring" />
             <Box className="glass-sheen" />
             {/* Glass header controls like reference */}
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', mb: 1.25 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1.25, gap: 1.5, flexWrap: 'wrap' }}>
               <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5, bgcolor: 'rgba(0,0,0,0.35)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '999px', p: 0.5 }}>
                 <Box sx={{ px: 1.5, py: 0.5, color: C.text100, fontWeight: 700, fontSize: '0.82rem', bgcolor: 'rgba(255,255,255,0.06)', borderRadius: '999px', boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08)' }}>Sign in</Box>
               </Box>
+              <Box sx={{ color: '#ffb8b8', fontSize: '0.72rem', letterSpacing: '0.1em', textTransform: 'uppercase', px: 1.1, py: 0.45, borderRadius: '999px', border: '1px solid rgba(255,120,120,0.24)', bgcolor: 'rgba(220,38,38,0.1)' }}>
+                Secure Channel
+              </Box>
             </Box>
 
-            <Typography sx={{ color: C.text100, fontWeight: 900, fontSize: '1.5rem', mb: 1 }}>
+            <Typography className="hero-title" sx={{ fontSize: { xs: '1.3rem', sm: '1.6rem' }, mb: 1 }}>
               Enterprise admin gateway
             </Typography>
-            <Typography sx={{ color: C.text300, fontSize: '0.92rem', mb: 2.2, maxWidth: 560 }}>
-              Secure operations with fast sign-in, real-time session governance, and security-first analytics in one clean control surface.
+            <Typography sx={{ color: '#c5ceda', fontSize: { xs: '0.88rem', sm: '0.94rem' }, mb: 2.2, maxWidth: 610, lineHeight: 1.55 }}>
+              Precision access for critical operations. Sign in fast, monitor token activity in real time, and enforce controls from a single hardened command surface.
             </Typography>
 
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.25, mb: 2 }}>
-              {[{h:'Enterprise-grade controls',p:'RBAC, session intel, anomaly detection.'},{h:'Modern authentication',p:'JWT, revocation, short-lived tokens.'},{h:'Operational excellence',p:'Dashboards, alerts, analytics.'},{h:'Hardened platform',p:'Encryption, secure defaults, audits.'}].map((f,i)=> (
-                <Box key={i} sx={{ bgcolor: 'rgba(13,17,23,0.22)', border: '1px solid rgba(255,255,255,0.24)', borderRadius: '12px', p: 1.25, backdropFilter: 'blur(10px)', transition: 'transform 180ms ease, border-color 180ms ease, background-color 180ms ease', '&:hover': { transform: 'translateY(-2px)', borderColor: 'rgba(255,255,255,0.36)', backgroundColor: 'rgba(13,17,23,0.3)' } }}>
-                  <Typography sx={{ color: C.text100, fontWeight: 700, fontSize: '0.9rem' }}>{f.h}</Typography>
-                  <Typography sx={{ color: C.text300, fontSize: '0.8rem', mt: 0.25 }}>{f.p}</Typography>
+              {featureCards.map((f, i) => (
+                <Box key={i} className="feature-card" sx={{ animation: `featureIn 420ms ease both`, animationDelay: `${120 + i * 80}ms` }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 1, mb: 0.65 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                      <Box className="feature-icon">{f.icon}</Box>
+                      <Typography sx={{ color: C.text100, fontWeight: 700, fontSize: '0.9rem' }}>{f.title}</Typography>
+                    </Box>
+                    <Typography sx={{ fontSize: '0.67rem', color: '#ffb8b8', border: '1px solid rgba(255,120,120,0.22)', bgcolor: 'rgba(220,38,38,0.1)', borderRadius: '999px', px: 0.75, py: 0.2, letterSpacing: '0.06em' }}>
+                      {f.meta}
+                    </Typography>
+                  </Box>
+                  <Typography sx={{ color: C.text300, fontSize: '0.8rem', lineHeight: 1.45 }}>{f.desc}</Typography>
                 </Box>
               ))}
             </Box>
 
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, flexWrap: 'wrap' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.8, flexWrap: 'wrap' }}>
+                {["SOC 2", "ISO 27001", "JWT Revocation"].map((tag) => (
+                  <Box key={tag} sx={{ fontSize: '0.68rem', color: '#d8e2ee', border: '1px solid rgba(255,255,255,0.2)', bgcolor: 'rgba(255,255,255,0.04)', borderRadius: '999px', px: 0.95, py: 0.35 }}>
+                    {tag}
+                  </Box>
+                ))}
+              </Box>
               <Button onClick={() => setOpenChooser(true)} variant="contained" sx={{ borderRadius: '12px', px: 2.6, py: 1.1, fontWeight: 800, color: '#111', textTransform: 'none', background: 'linear-gradient(180deg, #ffffff, #dddddd)', boxShadow: '0 10px 24px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.75)', transition: 'transform 180ms ease, box-shadow 180ms ease', '&:hover': { background: 'linear-gradient(180deg, #fafafa, #d3d3d3)', transform: 'translateY(-1px)', boxShadow: '0 14px 26px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.8)' } }}>Let's Go</Button>
             </Box>
           </Box>
@@ -373,14 +525,15 @@ function LoginForm({ handleLogin, error, isLoading }) {
             <Typography sx={{ color: C.text100, fontWeight: 800, mb: 1 }}>Choose a sign-in method</Typography>
             <Typography sx={{ color: C.text300, fontSize: '0.88rem', mb: 2 }}>Select the most appropriate path for your secure administrator session.</Typography>
             <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
-              <Box onClick={() => { setOpenChooser(false); setOpenPassModal(true); }} sx={{ cursor: 'pointer', bgcolor: 'rgba(13,17,23,0.2)', border: '1px solid rgba(255,255,255,0.26)', borderRadius: '12px', p: 2, backdropFilter: 'blur(10px)', transition: 'transform 180ms ease, border-color 180ms ease, background-color 180ms ease', '&:hover': { borderColor: C.redLt, transform: 'translateY(-2px)', backgroundColor: 'rgba(13,17,23,0.3)' } }}>
-                <Typography sx={{ color: C.text100, fontWeight: 700 }}>Authorized Password</Typography>
-                <Typography sx={{ color: C.text300, fontSize: '0.83rem', mt: 0.5 }}>Use assigned credentials with role and policy enforcement.</Typography>
-              </Box>
-              <Box onClick={() => { setOpenChooser(false); setOpenCardModal(true); }} sx={{ cursor: 'pointer', bgcolor: 'rgba(13,17,23,0.2)', border: '1px solid rgba(255,255,255,0.26)', borderRadius: '12px', p: 2, backdropFilter: 'blur(10px)', transition: 'transform 180ms ease, border-color 180ms ease, background-color 180ms ease', '&:hover': { borderColor: C.redLt, transform: 'translateY(-2px)', backgroundColor: 'rgba(13,17,23,0.3)' } }}>
-                <Typography sx={{ color: C.text100, fontWeight: 700 }}>Card</Typography>
-                <Typography sx={{ color: C.text300, fontSize: '0.83rem', mt: 0.5 }}>Tap a provisioned smart card for quick secure access.</Typography>
-              </Box>
+              {signInMethods.map((m, i) => (
+                <Box key={m.id} onClick={m.onClick} sx={{ cursor: 'pointer', bgcolor: 'rgba(13,17,23,0.2)', border: '1px solid rgba(255,255,255,0.26)', borderRadius: '12px', p: 2, backdropFilter: 'blur(10px)', transition: 'transform 180ms ease, border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease', animation: 'featureIn 360ms ease both', animationDelay: `${100 + i * 90}ms`, '&:hover': { borderColor: C.redLt, transform: 'translateY(-2px)', backgroundColor: 'rgba(13,17,23,0.3)', boxShadow: '0 10px 18px rgba(0,0,0,0.25)' } }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.4 }}>
+                    <Box sx={{ width: 28, height: 28, borderRadius: '8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#ffb8b8', border: '1px solid rgba(255,120,120,0.24)', bgcolor: 'rgba(220,38,38,0.12)' }}>{m.icon}</Box>
+                    <Typography sx={{ color: C.text100, fontWeight: 700 }}>{m.title}</Typography>
+                  </Box>
+                  <Typography sx={{ color: C.text300, fontSize: '0.83rem', mt: 0.5 }}>{m.desc}</Typography>
+                </Box>
+              ))}
             </Box>
           </Box>
         </Box>
@@ -389,6 +542,9 @@ function LoginForm({ handleLogin, error, isLoading }) {
         <Box sx={{ ...modalShellSx, display: openPassModal ? 'flex' : 'none' }}>
           <Box onClick={() => setOpenPassModal(false)} sx={modalBackdropSx} />
           <Box sx={{ ...modalPanelSx, width: 520, maxWidth: '92vw' }}>
+            <Box sx={{ width: 28, height: 28, borderRadius: '8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#ffb8b8', border: '1px solid rgba(255,120,120,0.24)', bgcolor: 'rgba(220,38,38,0.12)', mb: 1 }}>
+              <KeyRounded sx={{ fontSize: 17 }} />
+            </Box>
             <Typography sx={{ color: C.text100, fontWeight: 800, mb: 1 }}>Authorized Password</Typography>
             <Typography sx={{ color: C.text300, fontSize: '0.88rem', mb: 2 }}>Enter administrator credentials to continue to secure operations.</Typography>
             <Box component="form" onSubmit={(e) => { handleSubmit(e); }} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -407,6 +563,9 @@ function LoginForm({ handleLogin, error, isLoading }) {
         <Box sx={{ ...modalShellSx, display: openCardModal ? 'flex' : 'none' }}>
           <Box onClick={() => setOpenCardModal(false)} sx={modalBackdropSx} />
           <Box sx={{ ...modalPanelSx, width: 520, maxWidth: '92vw' }}>
+            <Box sx={{ width: 28, height: 28, borderRadius: '8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#ffb8b8', border: '1px solid rgba(255,120,120,0.24)', bgcolor: 'rgba(220,38,38,0.12)', mb: 1 }}>
+              <CreditCardRounded sx={{ fontSize: 17 }} />
+            </Box>
             <Typography sx={{ color: C.text100, fontWeight: 800, mb: 1 }}>Sign in with Card</Typography>
             <Typography sx={{ color: C.text300, fontSize: '0.88rem', mb: 2 }}>Present a provisioned smart card at the reader to begin authenticated access.</Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', py: 2 }}>
