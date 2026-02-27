@@ -23,32 +23,49 @@ Key outcomes delivered by the product:
 
 ## Overview of Project
 
-1. Welcome Page<br>
-![Welcome Page](Refrence%20Images/img-1.png)<br><br>
+1. Welcome Page
+<br>
+<img src="Refrence%20Images/img-1.png" alt="Welcome Page">
+<p>&nbsp;</p>
 
-2. Main Dashboard & Admin's Hub<br>
-![Main Dashboard & Admin's Hub](Refrence%20Images/img-2.png)<br><br>
+2. Main Dashboard & Admin's Hub
+<br>
+<img src="Refrence%20Images/img-2.png" alt="Main Dashboard & Admin's Hub">
+<p>&nbsp;</p>
 
-3. User-Profile Section<br>
-![User-Profile Section](Refrence%20Images/img-3.png)<br><br>
+3. User-Profile Section
+<br>
+<img src="Refrence%20Images/img-3.png" alt="User-Profile Section">
+<p>&nbsp;</p>
 
-4. Analytics Section<br>
-![Analytics Section](Refrence%20Images/img-4.png)<br><br>
+4. Analytics Section
+<br>
+<img src="Refrence%20Images/img-4.png" alt="Analytics Section">
+<p>&nbsp;</p>
 
-5. Summary Of Analytics<br>
-![Summary Of Analytics](Refrence%20Images/img-5.png)<br><br>
+5. Summary Of Analytics
+<br>
+<img src="Refrence%20Images/img-5.png" alt="Summary Of Analytics">
+<p>&nbsp;</p>
 
-6. Weekly & Monthly Time-based Metrics<br>
-![Weekly & Monthly Time-based Metrics](Refrence%20Images/img-6.png)<br><br>
+6. Weekly & Monthly Time-based Metrics
+<br>
+<img src="Refrence%20Images/img-6.png" alt="Weekly & Monthly Time-based Metrics">
+<p>&nbsp;</p>
 
-7. Heatmap Section<br>
-![Heatmap Section](Refrence%20Images/img-7.png)<br><br>
+7. Heatmap Section
+<br>
+<img src="Refrence%20Images/img-7.png" alt="Heatmap Section">
+<p>&nbsp;</p>
 
-8. Reports Section<br>
-![Reports Section](Refrence%20Images/img-8.png)<br><br>
+8. Reports Section
+<br>
+<img src="Refrence%20Images/img-8.png" alt="Reports Section">
+<p>&nbsp;</p>
 
-9. Security Settings & System Control<br>
-![Security Settings & System Control](Refrence%20Images/img-9.png)
+9. Security Settings & System Control
+<br>
+<img src="Refrence%20Images/img-9.png" alt="Security Settings & System Control">
 
 ## :sparkles: Product Capabilities
 
