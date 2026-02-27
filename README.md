@@ -23,31 +23,48 @@ Key outcomes delivered by the product:
 
 ## Overview of Project
 
-1. Welcome Page  
+1. Welcome Page
+<br>
 ![Welcome Page](Refrence%20Images/img-1.png)
+<br><br>
 
-2. Main Dashboard & Admin's Hub  
+2. Main Dashboard & Admin's Hub
+<br>
 ![Main Dashboard & Admin's Hub](Refrence%20Images/img-2.png)
+<br><br>
 
-3. User-Profile Section  
+3. User-Profile Section
+<br>
 ![User-Profile Section](Refrence%20Images/img-3.png)
+<br><br>
 
-4. Analytics Section  
+4. Analytics Section
+<br>
 ![Analytics Section](Refrence%20Images/img-4.png)
+<br><br>
 
-5. Summary Of Analytics  
+5. Summary Of Analytics
+<br>
 ![Summary Of Analytics](Refrence%20Images/img-5.png)
+<br><br>
 
-6. Weekly & Monthly Time-based Metrics  
+6. Weekly & Monthly Time-based Metrics
+<br>
 ![Weekly & Monthly Time-based Metrics](Refrence%20Images/img-6.png)
+<br><br>
 
-7. Heatmap Section  
+7. Heatmap Section
+<br>
 ![Heatmap Section](Refrence%20Images/img-7.png)
+<br><br>
 
-8. Reports Section  
+8. Reports Section
+<br>
 ![Reports Section](Refrence%20Images/img-8.png)
+<br><br>
 
-9. Security Settings & System Control  
+9. Security Settings & System Control
+<br>
 ![Security Settings & System Control](Refrence%20Images/img-9.png)
 
 ## :sparkles: Product Capabilities
