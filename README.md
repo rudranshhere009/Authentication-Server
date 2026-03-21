@@ -1,4 +1,6 @@
-﻿# Authentication Server Platform :shield:
+<div align="justify">
+
+# Authentication Server Platform :shield:
 
 A full-stack authentication and session-governance platform built with **FastAPI + PostgreSQL + React (Vite)**. The system is designed for organizations that need strong control over user access, short-lived session security, and admin-grade operational visibility from a single product.
 
@@ -21,6 +23,7 @@ Key outcomes delivered by the product:
 - Login time and logout time visibility via session history endpoints
 - Linux endpoint telemetry channel for host/network activity reporting
 
+</div>
 ## Overview of Project
 
 1. Welcome Page
